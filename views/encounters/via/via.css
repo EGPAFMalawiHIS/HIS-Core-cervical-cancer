@@ -1,0 +1,11 @@
+#tt_page_ever_had_via #clearButton, .tt_controls_ever_had_via #clearButton {
+  display: none;
+}
+
+#tt_page_offer_via #clearButton, .tt_controls_offer_via #clearButton {
+  display: none;
+}
+
+#tt_page_results_available #clearButton, .tt_controls_results_available #clearButton {
+  display: none;
+}

@@ -1,0 +1,69 @@
+
+
+
+
+<script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js"
+defer="true"></script>
+<!-- <script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/standard.js" defer="true"></script> -->
+<script type="text/javascript" src="/assets/js/jquery.min.js"></script>
+
+<script type="text/javascript" src="/assets/js/yes_no_ctrls.js"></script>
+<link rel="stylesheet" href="/assets/css/yes_no_ctrls.css" type="text/css">
+<script type="text/javascript" src="/assets/js/post_parameters.js"></script>
+<script type="text/javascript" src="/assets/js/generic_ajaxrequest.js"></script>
+<script type="text/javascript" src="/assets/js/moment.js"></script>
+<script type="text/javascript" src="/assets/js/alertifyjs/alertify.js"></script>
+<!--script type="text/javascript" src="/assets/js/does_connection_exist.js"></script-->
+<link rel="stylesheet" href="/assets/css/provider.css" type="text/css">
+<script type="text/javascript" src="/assets/js/provider.js  "></script>
+
+<link rel="stylesheet" href="/assets/css/alertifyjs/css/alertify.css" type="text/css">
+
+
+<link rel="stylesheet" href="via.css" type="text/css">
+<script type="text/javascript" src="via.js"></script>
+
+
+
+<body id="mateme">
+  <div id="container">
+      <div id="content">
+  
+          <form>
+              <input type="text" name="summary"
+                     tt_onLoad="__$('keyboard').style.display = 'none';addViaYesNo();checkIfInBDMode();"
+                     tt_pageStyleClass="NoControls" helpText="Ever had VIA" optional="true"/>
+  
+              <input type="text" name="summary"
+                     tt_onLoad="__$('keyboard').style.display = 'none';setNextBTN();addViaResultsAvailableYesNo();checkIfInBDMode();"
+                     condition="showResultsAvailable() == true;"
+                     tt_pageStyleClass="NoControls" helpText="Results available" optional="true"/>
+  
+              <input type="text" name="summary"
+                     tt_onLoad="__$('keyboard').style.display = 'none';addOfferViaYesNo();checkIfInBDMode();"
+                     tt_pageStyleClass="NoControls" helpText="Offer VIA" optional="true"/>
+                    
+               <select allowFreeText="false" helpText="VIA Test Results" 
+                 id="via_test_results" name="via_test_results" 
+                 condition="showTestResults() == true"
+                 tt_onLoad="endNextBTN();" key="via_test_results">
+                 <option value=""></option>
+                 <option value="Negative">Negative</option>
+                 <option value="Positive">Positive</option>
+                 <option value="Suspect">Suspect</option>
+              </select>
+
+              <select allowFreeText="false" helpText="Reason for denying VIA" 
+                  id="reason_for_no_via" name="reason_for_no_via" 
+                  condition="showTestResults() == false"
+                  tt_onLoad="setReasonForNoVIA();" key="reason_for_no_via">
+                  <option value=""></option>
+                  <option value="Client preferred counselling">Client preferred counselling</option>
+                  <option value="Not applicable">Not applicable</option>
+              </select>
+              
+          </form>
+  
+      </div>
+  </div>
+  </body>

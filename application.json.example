@@ -1,0 +1,67 @@
+{
+  "encounters": {
+   "VIA test": {
+      "available": true,
+      "activitiesIcon": "../assets/images/via-test.png",
+      "url": "/apps/CCM/views/encounters/via/via.html"
+    },
+   "Treatment": {
+      "available": true,
+      "activitiesIcon": "../assets/images/first-aid-kit.png",
+      "url": "/apps/CCM/views/encounters/treatment/treatment.html"
+    },
+   "Appointment": {
+      "available": true,
+      "activitiesIcon": "../assets/images/appointment.png",
+      "url": "/apps/CCM/views/encounters/appointment/appointment.html"
+    }
+  },
+  "activities": {
+    "url": "",
+    "tasks": []
+  },
+    
+  "others": [
+    {
+      "activitiesName": "National Health ID (Print)",
+      "available": false,
+      "activitiesIcon": "/assets/images/barcode.png",
+      "activitiesDescription": "Print Patient National Health ID",
+      "comment": "these are examples, add another application with this template at the end of these curly braces by adding a comma and copying this template"
+    },{
+      "activitiesName": "Lab activities",
+      "available": false,
+      "activitiesIcon": "/assets/images/lab.png",
+      "url": "/views/patient/labs.html",
+      "activitiesDescription": "Print Patient Visit Summary",
+      "comment": "these are examples, add another application with this template at the end of these curly braces by adding a comma and copying this template"
+    },{
+      "activitiesName": "Demographics (Edit)",
+      "available": false,
+      "activitiesIcon": "/assets/images/edit.png",
+      "url": "/views/patient/edit_demographics.html",
+      "activitiesDescription": "Print Patient Demographics",
+      "comment": "these are examples, add another application with this template at the end of these curly braces by adding a comma and copying this template"
+    },{
+      "activitiesName": "Change session date",
+      "available": false,
+      "activitiesIcon": "/assets/images/time.png",
+      "url": "/views/change_session_date.html",
+      "activitiesDescription": "Change session date (for retrospective entry)",
+      "comment": "these are examples, add another application with this template at the end of these curly braces by adding a comma and copying this template"
+    },{
+      "activitiesName": "Program(s)",
+      "available": false,
+      "activitiesIcon": "/assets/images/programs.png",
+      "url": "/views/patient/programs.html",
+      "activitiesDescription": "View / update patient's programs",
+      "comment": "these are examples, add another application with this template at the end of these curly braces by adding a comma and copying this template"
+    },{
+      "activitiesName": "Visit Summary (Print)",
+      "available": false,
+      "activitiesIcon": "/assets/images/folder.png",
+      "activitiesDescription": "Print Patient Visit Summary",
+      "comment": "these are examples, add another application with this template at the end of these curly braces by adding a comma and copying this template"
+    }
+  ]
+}

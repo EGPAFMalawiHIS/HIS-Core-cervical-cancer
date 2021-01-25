@@ -1,0 +1,68 @@
+
+
+
+
+<script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js"
+defer="true"></script>
+<!-- <script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/standard.js" defer="true"></script> -->
+<script type="text/javascript" src="/assets/js/jquery.min.js"></script>
+
+<!--script type="text/javascript" src="/assets/js/yes_no_ctrls.js"></script>
+<link rel="stylesheet" href="/assets/css/yes_no_ctrls.css" type="text/css"-->
+<script type="text/javascript" src="/assets/js/post_parameters.js"></script>
+<script type="text/javascript" src="/assets/js/generic_ajaxrequest.js"></script>
+<script type="text/javascript" src="/assets/js/moment.js"></script>
+<script type="text/javascript" src="/assets/js/alertifyjs/alertify.js"></script>
+<!--script type="text/javascript" src="/assets/js/does_connection_exist.js"></script-->
+<link rel="stylesheet" href="/assets/css/provider.css" type="text/css">
+<script type="text/javascript" src="/assets/js/provider.js  "></script>
+
+<link rel="stylesheet" href="/assets/css/alertifyjs/css/alertify.css" type="text/css">
+
+
+<link rel="stylesheet" href="treatment.css" type="text/css">
+<script type="text/javascript" src="treatment.js"></script>
+
+
+
+<body id="mateme">
+  <div id="container">
+      <div id="content">
+  
+          <form>
+         
+              <select allowFreeText="false" helpText="Select Treatment" 
+                 id="select_treatment" name="select_treatment" 
+                 tt_onLoad="addOtherOptionsWait();" key="select_treatment">
+                 <option value=""></option>
+                 <option value="Thermocoagulation">Thermocoagulation</option>
+                 <option value="Cryo">Cryo</option>
+                 <option value="Postponed treatment">Postponed treatment</option>
+                 <option value="Referral">Referral</option>
+              </select>
+
+              <select allowFreeText="false" helpText="Select postponed reason" 
+                 id="postponed_reason" name="postponed_reason"
+                 condition="showPostponedReason() == true;" 
+                 tt_onLoad="changeNextButton();" key="postponed_reason">
+                 <option value=""></option>
+                 <option value="Client NOT ready">Client NOT ready</option>
+                 <option value="Treatment not available">Treatment not available</option>
+                 <option value="Other conditions">Other conditions</option>
+              </select>
+
+              <select allowFreeText="false" helpText="Select referral reason" 
+                 id="referral_reason" name="referral_reason" 
+                 condition="showReferralReason() == true;" 
+                 tt_onLoad="changeNextButton();" key="referral_reason">
+                 <option value=""></option>
+                 <option value="Unable to treat client">Unable to treat client</option>
+                 <option value="Treatment not available">Treatment not available</option>
+                 <option value="Other conditions">Other conditions</option>
+              </select>
+
+          </form>
+  
+      </div>
+  </div>
+</body>
