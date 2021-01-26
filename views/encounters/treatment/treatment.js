@@ -47,3 +47,36 @@ function changeBTNext(e){
     nextBTN.innerHTML = "<span>Next</span>";
   }
 }
+
+function  createEncounter(){
+  let selected_option = $('select_treatment').value;
+  let params;
+  if(selected_option == 'Cryo' || selected_option == 'Thermocoagulation'){
+    params = {treatment: selected_option};
+  }else if(selected_option == 'Postponed treatment'){
+    if($('postponed_reason').value == ""){
+      showMessage("Please select a valid reason");
+      return;
+    }
+
+    params = {
+      treatment: selected_option,
+      reason: $('postponed_reason').value
+    }
+  }else if(selected_option == 'Referral'){
+    if($('referred_location').value == ""){
+      showMessage("Please select a valid location");
+      return;
+    }
+
+    params = {
+      treatment: selected_option,
+      reason: $('referral_reason').value,
+      referred_location: $('touchscreenInput' + tstCurrentPage).value
+    }
+  }else{
+    showMessage("Please select a valid treatment option");
+  }
+
+  console.log(params);
+}

@@ -54,11 +54,18 @@ defer="true"></script>
               <select allowFreeText="false" helpText="Select referral reason" 
                  id="referral_reason" name="referral_reason" 
                  condition="showReferralReason() == true;" 
-                 tt_onLoad="changeNextButton();" key="referral_reason">
+                 tt_onLoad="" key="referral_reason">
                  <option value=""></option>
                  <option value="Unable to treat client">Unable to treat client</option>
                  <option value="Treatment not available">Treatment not available</option>
                  <option value="Other conditions">Other conditions</option>
+              </select>
+
+              <select objectType="location" ajaxURL="/locations?name=" allowFreeText="true"
+                    condition="showReferralReason() == true;"
+                    field_type="alpha" helpText="Referred location" id="referred_location"
+                    name="observations[][value_coded_or_text]"
+                    tt_onLoad="changeNextButton()">
               </select>
 
           </form>
