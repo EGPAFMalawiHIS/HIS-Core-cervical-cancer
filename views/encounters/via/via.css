@@ -9,3 +9,11 @@
 #tt_page_results_available #clearButton, .tt_controls_results_available #clearButton {
   display: none;
 }
+
+.#tt_page_via_test_month .inputFrameClass, .tt_controls_via_test_month .inputFrameClass{
+  height: 86%;
+}
+
+.#tt_page_via_test_month #viewport, .tt_controls_via_test_month #viewport {
+  height: 85%;
+}

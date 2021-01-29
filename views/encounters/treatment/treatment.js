@@ -48,35 +48,89 @@ function changeBTNext(e){
   }
 }
 
+var observations;
+const VIAtretments  =  {
+  "Thermocoagulation": 9996,
+  "Cryo": 9506,
+  "Postponed treatment": 9997,
+  "Referral": "9675" 
+}
+
+const viaPostponedReasons = {
+  "Client NOT ready": 9998,
+  "Treatment NOT available": 9999,
+  "Other conditions": 6408
+}
+
+const viaReferralReasons = {
+  "Unable to treat client": 10000,
+  "Treatment not available": 9999,
+  "Other conditions": 6408
+}
+
 function  createEncounter(){
+
   let selected_option = $('select_treatment').value;
-  let params;
   if(selected_option == 'Cryo' || selected_option == 'Thermocoagulation'){
-    params = {treatment: selected_option};
+
+    observations = {
+      encounter_id: null,
+      observations: [
+          {concept_id: 10009, value_coded: VIAtretments[selected_option]}
+      ]
+    };
+
   }else if(selected_option == 'Postponed treatment'){
     if($('postponed_reason').value == ""){
       showMessage("Please select a valid reason");
       return;
     }
 
-    params = {
-      treatment: selected_option,
-      reason: $('postponed_reason').value
-    }
+    observations = {
+      encounter_id: null,
+      observations: [
+          {concept_id: 10009, value_coded: VIAtretments[selected_option]},
+          {concept_id: 10010 , value_coded: viaPostponedReasons[$('postponed_reason').value]}
+      ]
+    };
   }else if(selected_option == 'Referral'){
     if($('referred_location').value == ""){
       showMessage("Please select a valid location");
       return;
     }
 
-    params = {
-      treatment: selected_option,
-      reason: $('referral_reason').value,
-      referred_location: $('touchscreenInput' + tstCurrentPage).value
-    }
+    observations = {
+      encounter_id: null,
+      observations: [
+          {concept_id: 10009, value_coded: VIAtretments[selected_option]},
+          {concept_id: 1739 , value_coded: viaReferralReasons[$('referral_reason').value]},
+          {concept_id: 10011, value_text:  $('touchscreenInput' + tstCurrentPage).value}
+      ]
+    };
   }else{
     showMessage("Please select a valid treatment option");
   }
 
-  console.log(params);
+  let currentTime = moment().format(' HH:mm:ss');
+  let encounter_datetime = moment(sessionStorage.sessionDate).format('YYYY-MM-DD');
+  encounter_datetime += currentTime;
+
+  let encounter = {
+      encounter_type_name: 'VIA treatment',
+      encounter_type_id: 182,
+      patient_id: sessionStorage.patientID,
+      encounter_datetime: encounter_datetime
+  }
+
+  submitParameters(encounter, "/encounters", "postObs");
+}
+
+function postObs(encounter){
+  observations.encounter_id = encounter.encounter_id;
+
+  submitParameters(observations, "/observations", "nextPage");
+}
+
+function nextPage(obs){
+  window.location.href = "/views/patient_dashboard.html?patient_id=" + sessionStorage.patientID;
 }
