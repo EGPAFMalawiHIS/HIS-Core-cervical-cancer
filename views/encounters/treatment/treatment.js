@@ -132,5 +132,6 @@ function postObs(encounter){
 }
 
 function nextPage(obs){
-  window.location.href = "/views/patient_dashboard.html?patient_id=" + sessionStorage.patientID;
+  //window.location.href = "/views/patient_dashboard.html?patient_id=" + sessionStorage.patientID;
+  nextEncounter(sessionStorage.patientID, sessionStorage.programID);
 }

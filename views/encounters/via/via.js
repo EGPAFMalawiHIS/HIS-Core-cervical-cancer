@@ -318,7 +318,9 @@ function postObs(encounter){
 }
 
 function nextPage(obs){
-  window.location.href = "/views/patient_dashboard.html?patient_id=" + sessionStorage.patientID;
+  //window.location.href = "/views/patient_dashboard.html?patient_id=" + sessionStorage.patientID;
+  nextEncounter(sessionStorage.patientID, sessionStorage.programID);
+  return;
 }
 
 const VIAresults = {
@@ -334,10 +336,14 @@ const ReasonForNoVIA =  {
 
 
 function enterPreviousVIAdata() {
-  let results_available = yesNo_Hash['VIA results available']['Results available?'] == 'Yes';
-  let ever_had_via = yesNo_Hash['VIA Reception']['Ever had VIA?'] == 'Yes';
+  try {
+    let results_available = yesNo_Hash['VIA results available']['Results available?'] == 'Yes';
+    let ever_had_via = yesNo_Hash['VIA Reception']['Ever had VIA?'] == 'Yes';
 
-  return (results_available  == ever_had_via);
+    return (results_available  == ever_had_via);
+  }catch(e){
+    return false;
+  }
 }
 
 function configureVIAtestMonthCSS() {
@@ -404,6 +410,39 @@ function fetchLocations(){
   } catch (e) {
   }
 
+}
+
+function newVIAclient(){
+
+  let previous_date = moment(moment(sessionStorage.sessionDate) - 1).format('YYYY-MM-DD');
+  let url = apiProtocol+ '://' + apiURL + ':' + apiPort;
+  url += '/api/v1/observations?date=' + previous_date + "&person_id=";
+  url  +=  sessionStorage.patientID  + "&concept_id=9991";
+  $('page-load-cover').style="display: inline;";
+
+  var req = new XMLHttpRequest();
+  req.onreadystatechange = function () {
+      if (this.readyState == 4) {
+          if (this.status == 200) {
+              let obs = JSON.parse(this.responseText);
+              for(let i = 0; i < obs.length; i++){
+                if(obs[i].concept_id == 9991){
+                  gotoNextPage();
+                  $('page-load-cover').style="display: none;";
+                  return;
+                }
+              }
+          }
+      }
+  };
+  try {
+      req.open('GET', url, true);
+      req.setRequestHeader('Authorization', sessionStorage.getItem('authorization'));
+      req.send(null);
+  } catch (e) {
+  }
+  
+  $('page-load-cover').style="display: none;";
 }
 
 fetchLocations();

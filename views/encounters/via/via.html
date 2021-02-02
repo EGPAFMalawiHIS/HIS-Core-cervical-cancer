@@ -30,12 +30,14 @@ defer="true"></script>
       <div id="content">
   
           <form>
+            <!-- checkIfInBDMode(); -->
+
               <input type="text" name="summary"
-                     tt_onLoad="__$('keyboard').style.display = 'none';addViaYesNo();checkIfInBDMode();"
+                     tt_onLoad="__$('keyboard').style.display = 'none';addViaYesNo();checkIfInBDMode();newVIAclient();"
                      tt_pageStyleClass="NoControls" helpText="Ever had VIA" optional="true"/>
   
               <input type="text" name="summary"
-                     tt_onLoad="__$('keyboard').style.display = 'none';setNextBTN();addViaResultsAvailableYesNo();checkIfInBDMode();"
+                     tt_onLoad="__$('keyboard').style.display = 'none';setNextBTN();addViaResultsAvailableYesNo();"
                      condition="showResultsAvailable() == true;"
                      tt_pageStyleClass="NoControls" helpText="Results available" optional="true"/>
  
@@ -117,7 +119,7 @@ defer="true"></script>
                    tt_onLoad="ShowCategory2('Previous VIA assessment');" key="previous_via_test_results">
                    <option value=""></option>
                    <option value="Negative">Negative</option>
-                   <option value="Positive">Positive</option>
+                   <!--option value="Positive">Positive</option-->
                    <option value="Suspect">Suspect</option>
                 </select>
 
@@ -140,7 +142,7 @@ defer="true"></script>
 
 
               <input type="text" name="summary"
-                     tt_onLoad="__$('keyboard').style.display = 'none';addOfferViaYesNo();checkIfInBDMode();"
+                     tt_onLoad="__$('keyboard').style.display = 'none';addOfferViaYesNo();"
                      tt_pageStyleClass="NoControls" helpText="Offer VIA" optional="true"/>
                     
                <select allowFreeText="false" helpText="VIA Test Results" 
@@ -166,4 +168,7 @@ defer="true"></script>
   
       </div>
   </div>
+
+  <div id="page-load-cover"></div>
+  
   </body>

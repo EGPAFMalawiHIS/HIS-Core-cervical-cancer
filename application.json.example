@@ -1,19 +1,24 @@
 {
   "encounters": {
-   "VIA test": {
+   "via test": {
       "available": true,
       "activitiesIcon": "../assets/images/via-test.png",
       "url": "/apps/CCM/views/encounters/via/via.html"
     },
-   "Treatment": {
+   "via treatment": {
       "available": true,
       "activitiesIcon": "../assets/images/first-aid-kit.png",
       "url": "/apps/CCM/views/encounters/treatment/treatment.html"
     },
-   "Appointment": {
+   "cancer treatment": {
+      "available": true,
+      "activitiesIcon": "../assets/images/cancer.png",
+      "url": "/apps/CCM/views/encounters/cancer_treatment/treatment.html"
+    },
+   "appointment": {
       "available": true,
       "activitiesIcon": "../assets/images/appointment.png",
-      "url": "/apps/CCM/views/encounters/appointment/appointment.html"
+      "url": "/views/patient/appointment.html"
     }
   },
   "activities": {
