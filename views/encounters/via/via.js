@@ -314,10 +314,40 @@ function createEncounter(observations){
 function postObs(encounter){
   observations.encounter_id = encounter.encounter_id;
 
-  submitParameters(observations, "/observations", "nextPage");
+  submitParameters(observations, "/observations", "changeState");
 }
 
-function nextPage(obs){
+function changeState(obs){
+  let outcome = {
+    location_id: locations[sessionStorage.currentLocation],
+    state: 185,
+    date: sessionStorage.sessionDate
+  }
+  let state = JSON.stringify(outcome);
+
+  let url = apiProtocol+ '://' + apiURL + ':' + apiPort;
+  url += '/api/v1/programs/' + sessionStorage.programID + '/patients/';
+  url +=  sessionStorage.patientID + '/states';
+
+  var req = new XMLHttpRequest();
+  req.onreadystatechange = function () {
+      if (this.readyState == 4) {
+          if (this.status == 201) {
+            let obs = JSON.parse(this.responseText);
+            nextPage();  
+          }
+      }
+  };
+  try {
+      req.open('POST', url, true);
+      req.setRequestHeader('Authorization', sessionStorage.getItem('authorization'));
+      req.setRequestHeader('Content-type', "application/json");
+      req.send(state);
+  } catch (e) {
+  }
+}
+
+function nextPage(){
   //window.location.href = "/views/patient_dashboard.html?patient_id=" + sessionStorage.patientID;
   nextEncounter(sessionStorage.patientID, sessionStorage.programID);
   return;
