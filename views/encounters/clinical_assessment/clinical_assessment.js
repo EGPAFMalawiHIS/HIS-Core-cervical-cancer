@@ -6,16 +6,16 @@ YesNoConcepts["Yes"] = 1065;
 YesNoConcepts["No"] = 1066;
 
 
-  function addViaYesNo() {
+  function addCxCaYesNo() {
     var tar = document.getElementById("inputFrame" + tstCurrentPage);
-    var attr = 'Ever had VIA?,1805'
-    buildYesNoUI('VIA Reception', attr, tar);
+    var attr = 'Ever had CxCa screening?,9991'
+    buildYesNoUI('CxCa screening', attr, tar);
 }
   
-function addOfferViaYesNo() {
+function addOfferCxCaYesNo() {
     var tar = document.getElementById("inputFrame" + tstCurrentPage);
-    var attr = 'Offer VIA?,1805'
-    buildYesNoUI('Offer VIA', attr, tar);
+    var attr = 'Offer CxCa screening?,9992'
+    buildYesNoUI('Offer CxCa screening', attr, tar);
 }
 
 function setReasonForNoVIA() {
@@ -26,15 +26,15 @@ function setReasonForNoVIA() {
   $('nextButton').setAttribute('onmousedown','submitParams();')
 }
 
-function addViaResultsAvailableYesNo() {
+function addCxCaResultsAvailableYesNo() {
     var tar = document.getElementById("inputFrame" + tstCurrentPage);
     var attr = 'Results available?,1805,checkIfresultsAvailable'
-    buildYesNoUI('VIA results available', attr, tar);
+    buildYesNoUI('CxCa results available', attr, tar);
 }
 
 
 function showResultsAvailable(){
-  let everHadVIA = yesNo_Hash['VIA Reception']['Ever had VIA?'];
+  let everHadVIA = yesNo_Hash['CxCa screening']['Ever had CxCa screening?'];
   return (everHadVIA == "Yes" ? true : false);
 }
 
@@ -76,11 +76,6 @@ function finishEncounter() {
   }
 }
 
-function showTestResults(){
-  let offer_via = yesNo_Hash["Offer VIA"]['Offer VIA?'];
-  return (offer_via == 'Yes' ? true : false);
-}
-
 function endNextBTN(){
   let nextBTN = $('nextButton');
   nextBTN.setAttribute("onmousedown","submitParams();");
@@ -111,24 +106,24 @@ function calculateEstimatedDate(period){
 
 function submitParams(){
 
-  if(yesNo_Hash["VIA Reception"]["Ever had VIA?"] ==  'Yes' && 
-    yesNo_Hash["VIA results available"]["Results available?"] == "Yes" && 
-      yesNo_Hash["Offer VIA"]["Offer VIA?"] == "Yes"){
+  if(yesNo_Hash["CxCa screening"]["Ever had CxCa screening?"] ==  'Yes' && 
+    yesNo_Hash["CxCa results available"]["Results available?"] == "Yes" && 
+      yesNo_Hash["Offer CxCa screening"]["Offer CxCa screening?"] == "Yes"){
 
-      let previous_via_location  = locations[$('via_location').value];
-      let previous_via_year = $('via_test_year').value;
-      let previous_via_date;
-      let via_date_estimated = 0;
-      let previous_via_result = VIAresults[$('previous_via_test_results').value];
-      let via_result = VIAresults[$('touchscreenInput' + tstCurrentPage).value];
+      let previous_cxca_location  = locations[$('cxca_location').value];
+      let previous_cxca_year = $('cxca_test_year').value;
+      let previous_cxca_date;
+      let cxca_date_estimated = 0;
+      let previous_screening_method = CxCaScreeningMethods[$('previous_screening_method').value];
+      let treatment_status = treatmentStatus[$('touchscreenInput' + tstCurrentPage).value];
 
-      if(previous_via_year.toLowerCase() == 'unknown'){
-        previous_via_date = calculateEstimatedDate($('previous_via_date_estimation').value);
-        via_date_estimated = 1;
+      if(previous_cxca_year.toLowerCase() == 'unknown'){
+        previous_cxca_date = calculateEstimatedDate($('previous_cxca_date_estimation').value);
+        cxca_date_estimated = 1;
       }else{
-        let via_month = $('via_test_month').value;
-        let  via_day = $('via_test_day').value;
-        previous_via_date = moment(`${previous_via_year}-${via_month}-${via_day}`).format("YYYY-MM-DD");
+        let cxca_month = $('cxca_test_month').value;
+        let  cxca_day = $('cxca_test_day').value;
+        previous_cxca_date = moment(`${previous_cxca_year}-${cxca_month}-${cxca_day}`).format("YYYY-MM-DD");
       }
 
       observations = {
@@ -137,32 +132,32 @@ function submitParams(){
             {concept_id: 9991, value_coded: 1065},
             {concept_id: 9515, value_coded: 1065},
             {concept_id: 9992, value_coded: 1065},
-            {concept_id: 9994, value_coded: (via_date_estimated == 1 ? 7437 : null), value_datetime: previous_via_date}, 
-            {concept_id: 10012, value_text: previous_via_location},
-            {concept_id: 10013, value_coded: previous_via_result},
-            {concept_id: 9504, value_coded: via_result}
+            {concept_id: 9994, value_coded: (cxca_date_estimated == 1 ? 7437 : null), value_datetime: previous_cxca_date}, 
+            {concept_id: 10012, value_text: previous_cxca_location},
+            {concept_id: 10039, value_coded: previous_screening_method},
+            {concept_id: 10009, value_coded: treatment_status}
         ]
       };
 
      
-    }else if(yesNo_Hash["VIA Reception"]["Ever had VIA?"] ==  'Yes' && 
-    yesNo_Hash["VIA results available"]["Results available?"] == "Yes" && 
-      yesNo_Hash["Offer VIA"]["Offer VIA?"] == "No"){
+    }else if(yesNo_Hash["CxCa screening"]["Ever had CxCa screening?"] ==  'Yes'  && 
+    yesNo_Hash["CxCa results available"]["Results available?"] == "Yes" && 
+    yesNo_Hash["Offer CxCa screening"]["Offer CxCa screening?"] == "No"){
 
-      let previous_via_location  = locations[$('via_location').value];
-      let previous_via_year = $('via_test_year').value;
-      let previous_via_date;
-      let via_date_estimated = 0;
-      let previous_via_result = VIAresults[$('previous_via_test_results').value];
-      let reason_for_no_via = ReasonForNoVIA[$('touchscreenInput' + tstCurrentPage).value];
+      let previous_cxca_location  = locations[$('cxca_location').value];
+      let previous_cxca_year = $('cxca_test_year').value;
+      let previous_cxca_date;
+      let cxca_date_estimated = 0;
+      let previous_screening_method = CxCaScreeningMethods[$('previous_screening_method').value];
+      let reason_for_no_cxca = ReasonForNoCxCa[$('touchscreenInput' + tstCurrentPage).value];
 
-      if(previous_via_year.toLowerCase() == 'unknown'){
-        previous_via_date = calculateEstimatedDate($('previous_via_date_estimation').value);
-        via_date_estimated = 1;
+      if(previous_cxca_year.toLowerCase() == 'unknown'){
+        previous_cxca_date = calculateEstimatedDate($('previous_cxca_date_estimation').value);
+        cxca_date_estimated = 1;
       }else{
-        let via_month = $('via_test_month').value;
-        let  via_day = $('via_test_day').value;
-        previous_via_date = moment(`${previous_via_year}-${via_month}-${via_day}`).format("YYYY-MM-DD");
+        let cxca_month = $('cxca_test_month').value;
+        let  cxca_day = $('cxca_test_day').value;
+        previous_cxca_date = moment(`${previous_cxca_year}-${cxca_month}-${cxca_day}`).format("YYYY-MM-DD");
       }
 
       observations = {
@@ -171,118 +166,122 @@ function submitParams(){
             {concept_id: 9991, value_coded: 1065},
             {concept_id: 9515, value_coded: 1065},
             {concept_id: 9992, value_coded: 1066},
-            {concept_id: 9994, value_coded: (via_date_estimated == 1 ? 7437 : null), value_datetime: previous_via_date}, 
-            {concept_id: 10012, value_text: previous_via_location},
-            {concept_id: 10013, value_coded: previous_via_result},
-            {concept_id: 10008, value_coded: reason_for_no_via}
+            {concept_id: 9994, value_coded: (cxca_date_estimated == 1 ? 7437 : null), value_datetime: previous_cxca_date}, 
+            {concept_id: 10012, value_text: previous_cxca_location},
+            {concept_id: 10039, value_coded: previous_screening_method},
+            {concept_id: 10008, value_coded: reason_for_no_cxca}
         ]
       };
      
-  }else if(yesNo_Hash["VIA Reception"]["Ever had VIA?"] ==  'Yes' && 
-    yesNo_Hash["VIA results available"]["Results available?"] == "No" &&
-      yesNo_Hash["Offer VIA"]["Offer VIA?"] == "Yes"){
+  }else if(yesNo_Hash["CxCa screening"]["Ever had CxCa screening?"] ==  'Yes' && 
+      yesNo_Hash["CxCa results available"]["Results available?"] == "No" &&
+      yesNo_Hash["Offer CxCa screening"]["Offer CxCa screening?"] == "Yes"){
 
-        let via_result = VIAresults[$('touchscreenInput' + tstCurrentPage).value];
+        let screening_method = CxCaScreeningMethods[$('touchscreenInput' + tstCurrentPage).value];
         observations = {
           encounter_id: null,
           observations: [
               {concept_id: 9991, value_coded: 1065},
               {concept_id: 9515, value_coded: 1066},
               {concept_id: 9992, value_coded: 1065},
-              {concept_id: 9504, value_coded: via_result}
+              {concept_id: 10038, value_coded: screening_method}
           ]
         };
 
-  }else if(yesNo_Hash["VIA Reception"]["Ever had VIA?"] ==  'Yes' && 
-    yesNo_Hash["VIA results available"]["Results available?"] == "No" &&
-      yesNo_Hash["Offer VIA"]["Offer VIA?"] == "No"){
+  }else if(yesNo_Hash["CxCa screening"]["Ever had CxCa screening?"] == 'Yes' && 
+    yesNo_Hash["CxCa results available"]["Results available?"] == "No" &&
+      yesNo_Hash["Offer CxCa screening"]["Offer CxCa screening?"] == "No"){
 
-        let reason_for_no_via = ReasonForNoVIA[$('touchscreenInput' + tstCurrentPage).value];
+        let reason_for_no_cxca = ReasonForNoCxCa[$('touchscreenInput' + tstCurrentPage).value];
         observations = {
           encounter_id: null,
           observations: [
               {concept_id: 9991, value_coded: 1065},
               {concept_id: 9515, value_coded: 1066},
               {concept_id: 9992, value_coded: 1066},
-              {concept_id: 10008, value_coded: reason_for_no_via}
+              {concept_id: 10008, value_coded: reason_for_no_cxca}
           ]
         };
 
-  }else if(yesNo_Hash["Offer VIA"]["Offer VIA?"] == "No" &&  
-    yesNo_Hash["VIA Reception"]["Ever had VIA?"] ==  'No'){
-      let reason_for_no_via = ReasonForNoVIA[$('touchscreenInput' + tstCurrentPage).value];
+  }else if(yesNo_Hash["Offer CxCa screening"]["Offer CxCa screening?"] == "No" &&  
+    yesNo_Hash["CxCa screening"]["Ever had CxCa screening?"] ==  'No'){
+      let reason_for_no_cxca = ReasonForNoCxCa[$('touchscreenInput' + tstCurrentPage).value];
       observations = {
         encounter_id: null,
         observations: [
-            {concept_id: 9991, value_coded: 1065},
+            {concept_id: 9991, value_coded: 1066},
             {concept_id: 9992, value_coded: 1066},
-            {concept_id: 10008, value_coded: reason_for_no_via}
+            {concept_id: 10008, value_coded: reason_for_no_cxca}
         ]
       };
 
 
-    }else if(yesNo_Hash["VIA Reception"]["Ever had VIA?"] ==  'No' && 
-      yesNo_Hash["Offer VIA"]["Offer VIA?"] == "Yes"){
-
-        let via_result = VIAresults[$('touchscreenInput' + tstCurrentPage).value];
+    }else if(yesNo_Hash["CxCa screening"]["Ever had CxCa screening?"] ==  'No' && 
+      yesNo_Hash["Offer CxCa screening"]["Offer CxCa screening?"] == "Yes"){
+        let screening_method = CxCaScreeningMethods[$('screening_method').value];
+        let treatment_status = treatmentStatus[$('touchscreenInput' + tstCurrentPage).value];
+        
         observations = {
           encounter_id: null,
           observations: [
               {concept_id: 9991, value_coded: 1066},
               {concept_id: 9992, value_coded: 1065},
-              {concept_id: 9504, value_coded: via_result}
+              {concept_id: 10038, value_coded: screening_method},
+              {concept_id: 10009, value_coded: treatment_status}
           ]
         };
 
 
-  }else if(yesNo_Hash["Offer VIA"]["Offer VIA?"] == "Yes"){
-    let via_result = VIAresults[$('touchscreenInput' + tstCurrentPage).value];
+  }else if(yesNo_Hash["Offer CxCa screening"]["Offer CxCa screening?"] == "Yes"){
+    let screening_method = CxCaScreeningMethods[$('touchscreenInput' + tstCurrentPage).value];
     observations = {
       encounter_id: null,
       observations: [
           {concept_id: 9991, value_coded: 1065},
-          {concept_id: 9504, value_coded: via_result}
+          {concept_id: 10038, value_coded: screening_method}
       ]
     };
 
 
-  }else if(yesNo_Hash["Offer VIA"]["Offer VIA?"] == "No"){
-    let reason_for_no_via = ReasonForNoVIA[$('touchscreenInput' + tstCurrentPage).value];
+  }else if(yesNo_Hash["Offer CxCa screening"]["Offer CxCa screening?"] == "No"){
+    let reason_for_no_cxca = ReasonForNoCxCa[$('touchscreenInput' + tstCurrentPage).value];
 
     observations = {
       encounter_id: null,
       observations: [
           {concept_id: 9991, value_coded: 1066},
-          {concept_id: 10008, value_coded:  reason_for_no_via}
+          {concept_id: 10008, value_coded:  reason_for_no_cxca}
       ]
     };
 
 
-  }else if(yesNo_Hash["VIA Reception"]["Ever had VIA?"] ==  "No" && 
-    yesNo_Hash["Offer VIA"]["Offer VIA?"] == "Yes"){
+  }else if(yesNo_Hash["CxCa screening"]["Ever had CxCa screening?"] ==  "No" && 
+    yesNo_Hash["Offer CxCa screening"]["Offer CxCa screening?"]  == "Yes"){
 
-      let via_result = VIAresults[$('touchscreenInput' + tstCurrentPage).value];
+      let treatment_status = treatmentStatus[$('touchscreenInput' + tstCurrentPage).value];
+      let screening_method = CxCaScreeningMethods[$('screening_method').value];
       observations = {
         encounter_id: null,
         observations: [
             {concept_id: 9991, value_coded: 1066},
             {concept_id: 9992, value_coded: 1065},
-            {concept_id: 9504, value_coded: via_result}
+            {concept_id: 10009, value_coded: treatment_status},
+            {concept_id: 10038, value_coded: screening_method}
         ]
       };
 
 
 
-  }else if(yesNo_Hash["VIA Reception"]["Ever had VIA?"] ==  "No" && 
-    yesNo_Hash["Offer VIA"]["Offer VIA?"] == "No"){
+  }else if(yesNo_Hash["CxCa screening"]["Ever had CxCa screening?"]  ==  "No" && 
+    yesNo_Hash["Offer CxCa screening"]["Offer CxCa screening?"] == "No"){
 
-      let reason_for_no_via = ReasonForNoVIA[$('touchscreenInput' + tstCurrentPage).value];
+      let reason_for_no_cxca = ReasonForNoCxCa[$('touchscreenInput' + tstCurrentPage).value];
         observations = {
           encounter_id: null,
           observations: [
               {concept_id: 9991, value_coded: 1066},
               {concept_id: 9992, value_coded: 1066},
-              {concept_id: 10008, value_coded: reason_for_no_via}
+              {concept_id: 10008, value_coded: reason_for_no_cxca}
           ]
         };
       
@@ -290,7 +289,6 @@ function submitParams(){
     showMessage("Something went wrong. Please call support");
     return;
   }
-
 
   createEncounter(observations);
 }
@@ -301,13 +299,12 @@ function createEncounter(observations){
   encounter_datetime += currentTime;
 
   let encounter = {
-      encounter_type_name: 'VIA test',
+      encounter_type_name: 'CxCa test',
       encounter_type_id: 181,
       patient_id: sessionStorage.patientID,
       encounter_datetime: encounter_datetime
   }
 
-  console.log(encounter);
   submitParameters(encounter, "/encounters", "postObs");
 }
 
@@ -353,32 +350,43 @@ function nextPage(){
   return;
 }
 
+const CxCaScreeningMethods = {
+  "VIA": 10020, "PAP Smear": 41,
+  "HPV DNA": 10021, "Speculum Exam": 10022
+};
+
+const treatmentStatus= {
+  "Same day Treatment": 10029,
+  "Postponed Treatment": 9997,
+  "Referral": 9675
+};
+
 const VIAresults = {
   "Negative": 664, 
   "Positive": 703,
   "Suspect": 9995
 };
 
-const ReasonForNoVIA =  {
+const ReasonForNoCxCa =  {
   "Not applicable": 1175,
   "Client preferred counseling": 10007
 };
 
 
-function enterPreviousVIAdata() {
+function enterPreviousCxCaData() {
   try {
-    let results_available = yesNo_Hash['VIA results available']['Results available?'] == 'Yes';
-    let ever_had_via = yesNo_Hash['VIA Reception']['Ever had VIA?'] == 'Yes';
+    let results_available = yesNo_Hash['CxCa results available']['Results available?'] == 'Yes';
+    let ever_had_cxca = yesNo_Hash['CxCa screening']['Ever had CxCa screening?'] == 'Yes';
 
-    return (results_available  == ever_had_via);
+    return (results_available  == ever_had_cxca);
   }catch(e){
     return false;
   }
 }
 
-function configureVIAtestMonthCSS() {
-  let via_test_month = $('inputFrame' + tstCurrentPage);
-  via_test_month.style = "width: 95.5%; height: 86%;"
+function configureCxCaTestMonthCSS() {
+  let cxca_test_month = $('inputFrame' + tstCurrentPage);
+  cxca_test_month.style = "width: 95.5%; height: 86%;"
 
   $('viewport').style = "height: 85%;"
 
@@ -442,7 +450,7 @@ function fetchLocations(){
 
 }
 
-function newVIAclient(){
+function newCxCaClient(){
 
   let previous_date = moment(moment(sessionStorage.sessionDate) - 1).format('YYYY-MM-DD');
   let url = apiProtocol+ '://' + apiURL + ':' + apiPort;
@@ -476,3 +484,48 @@ function newVIAclient(){
 }
 
 fetchLocations();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function screeningMethod(){
+  return $('screening_method').value;
+}
+
+function offerCxCaScreening(){
+  try {
+    return (yesNo_Hash['Offer CxCa screening']['Offer CxCa screening?']  == 'Yes');
+  }catch(e){
+    return false;
+  }
+}

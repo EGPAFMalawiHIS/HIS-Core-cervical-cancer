@@ -1,19 +1,29 @@
 {
   "encounters": {
-   "via test": {
+   "cxca reception": {
+      "available": true,
+      "activitiesIcon": "../assets/images/reception.png",
+      "url": "/apps/CxCa/views/encounters/reception/reception.html"
+    },
+   "cxca test": {
       "available": true,
       "activitiesIcon": "../assets/images/via-test.png",
-      "url": "/apps/CCM/views/encounters/via/via.html"
+      "url": "/apps/CxCa/views/encounters/clinical_assessment/clinical_assessment.html"
     },
-   "via treatment": {
+   "cxca screening result": {
       "available": true,
       "activitiesIcon": "../assets/images/first-aid-kit.png",
-      "url": "/apps/CCM/views/encounters/treatment/treatment.html"
+      "url": "/apps/CxCa/views/encounters/screening_result/screening_result.html"
     },
    "cancer treatment": {
       "available": true,
       "activitiesIcon": "../assets/images/cancer.png",
-      "url": "/apps/CCM/views/encounters/cancer_treatment/treatment.html"
+      "url": "/apps/CxCa/views/encounters/cancer_treatment/treatment.html"
+    },
+   "cxca referral feedback": {
+      "available": true,
+      "activitiesIcon": "../assets/images/feedback.png",
+      "url": "/apps/CxCa/views/encounters/feedback/feedback.html"
     },
    "appointment": {
       "available": true,

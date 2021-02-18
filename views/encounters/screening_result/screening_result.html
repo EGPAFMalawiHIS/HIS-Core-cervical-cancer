@@ -20,9 +20,30 @@ defer="true"></script>
 <link rel="stylesheet" href="/assets/css/alertifyjs/css/alertify.css" type="text/css">
 
 
-<link rel="stylesheet" href="treatment.css" type="text/css">
-<script type="text/javascript" src="treatment.js"></script>
+<link rel="stylesheet" href="screening_result.css" type="text/css">
+<script type="text/javascript" src="screening_result.js"></script>
 
+<style>
+    #cover {
+        display: inline;
+        position: absolute;
+        background-color: black;
+        width: 100%;
+        height: 102%;
+        left: 0%;
+        top: 0%;
+        z-index: 990;
+        opacity: 0.65;
+    }
+
+    #spinner {
+        position: absolute;
+        top: 150px;
+        left: 40%;
+        z-index: 991;
+    }
+
+</style>
 
 
 <body id="mateme">
@@ -31,12 +52,18 @@ defer="true"></script>
   
           <form>
          
-              <select allowFreeText="false" helpText="Select Treatment" 
-                 id="select_treatment" name="select_treatment" 
+              <select allowFreeText="false" helpText="Screening Result" 
+                 id="screening_result" name="screening_result" 
                  tt_onLoad="addOtherOptionsWait();checkIfInBDMode();" key="select_treatment">
                  <option value=""></option>
-                 <option value="Thermocoagulation">Thermocoagulation</option>
-                 <option value="Cryo">Cryo</option>
+              </select>
+
+              <select allowFreeText="false" helpText="Enter treatment option" 
+                 id="treatment_option" name="treatment_option" 
+                 tt_onLoad="disableENDbtn();addOtherOptions();" key="treatment_option">
+                 <option value=""></option>
+                 <option value="Yes">Yes</option>
+                 <option value="Lab follow-up">Lab follow-up</option>
                  <option value="Postponed treatment">Postponed treatment</option>
                  <option value="Referral">Referral</option>
               </select>
@@ -68,8 +95,12 @@ defer="true"></script>
                     tt_onLoad="changeNextButton()">
               </select>
 
+
           </form>
   
       </div>
+
+      <img src="/../../assets/images/formloader.gif" id="spinner" />  
+      <div id="cover"></div>
   </div>
 </body>

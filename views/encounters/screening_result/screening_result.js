@@ -4,7 +4,7 @@ var tt_cancel_destination = "/views/patient_dashboard.html?patient_id=" + sessio
 
 
 function showPostponedReason() {
-  let select_treatment = $('select_treatment').value;
+  let select_treatment = $('treatment_option').value;
   return (select_treatment == 'Postponed treatment' ? true :  false);
 }
 
@@ -39,7 +39,7 @@ function changeBTNext(e){
   let select_option = e.getAttribute('tstvalue');
   let nextBTN = $('nextButton');
   
-  if(select_option ==  "Cryo" || select_option == 'Thermocoagulation'){
+  if(select_option ==  "Yes"){
     nextBTN.setAttribute("onmousedown", "createEncounter();");
     nextBTN.innerHTML = "<span>Finish</span>";
   }else{
@@ -135,3 +135,105 @@ function nextPage(obs){
   //window.location.href = "/views/patient_dashboard.html?patient_id=" + sessionStorage.patientID;
   nextEncounter(sessionStorage.patientID, sessionStorage.programID);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function fetchScreeningMthod(concept_id){
+  let url = sessionStorage.apiProtocol+ '://' + apiURL + ':' + apiPort + '/api/v1/concepts/' + concept_id;
+
+  var req = new XMLHttpRequest();
+  req.onreadystatechange = function () {
+      if (this.readyState == 4) {
+          if (this.status == 200) {
+              let concept = JSON.parse(this.responseText);
+              if(concept){
+                loadTreatmentOptions(concept.concept_names[0].name)
+              }
+          }
+      }
+  };
+  try {
+      req.open('GET', url, true);
+      req.setRequestHeader('Authorization', sessionStorage.getItem('authorization'));
+      req.send(null);
+  } catch (e) {
+  }
+}
+
+function fetchTreatmentOptions(){
+  let url = sessionStorage.apiProtocol+ '://' + apiURL + ':' + apiPort + '/api/v1/observations';
+  url += "?concept_id=10038&end_date=" + sessionStorage.sessionDate + "&start_date=1900-01-01";
+  url += '&person_id=' + sessionStorage.patientID + "&page_size=1&page=0";
+
+  var req = new XMLHttpRequest();
+  req.onreadystatechange = function () {
+      if (this.readyState == 4) {
+          if (this.status == 200) {
+              let obs = JSON.parse(this.responseText);
+              if(obs){
+                fetchScreeningMthod(obs[0].value_coded);
+              }
+          }
+      }
+  };
+  try {
+      req.open('GET', url, true);
+      req.setRequestHeader('Authorization', sessionStorage.getItem('authorization'));
+      req.send(null);
+  } catch (e) {
+  }
+}
+
+function loadTreatmentOptions(screening_method){
+  let select_treatment = $('screening_result');
+  let options;
+
+  if(screening_method.match(/via/i)){
+    options = ["Thermocoagulation","POSITIVE CRYO","Suspect Cancer"];
+  }else if(screening_method.match(/smear/i)){
+    options = ["PAP Smear Normal","PAP Smear Abnormal"];
+  }else if(screening_method.match(/HPV DNA/i)){
+    options = ["HPV positive","HPV negative"];
+  }else if(screening_method.match(/Speculum/i)){
+    options = ["Visble Lesion","No visble Lesion"];
+  }
+
+  addVIAoptions(select_treatment, options);
+  $('spinner').style = 'display: none;';
+  $('cover').style = 'display: none;';
+  //gotoPage(tstCurrentPage);
+}
+
+function addVIAoptions(e, options){
+  for(let i = 0; i < options.length; i++){
+    let opt = document.createElement('option');
+    opt.innerHTML = options[i];
+    opt.setAttribute("value", options[i]);
+    e.appendChild(opt);
+  }
+}
+
+function disableENDbtn(){
+  $('nextButton').setAttribute('onmousedown','');
+}
+
+function createScreeningResult(){
+  let screening_result = $('screening_result').value;
+  let treatment_option = $('treatment_option').value;
+  console.log(screening_result);
+  console.log(treatment_option);
+}
+
+fetchTreatmentOptions();

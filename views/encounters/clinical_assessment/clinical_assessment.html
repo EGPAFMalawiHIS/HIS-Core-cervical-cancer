@@ -1,0 +1,175 @@
+
+
+
+
+<script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js"
+defer="true"></script>
+<!-- <script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/standard.js" defer="true"></script> -->
+<script type="text/javascript" src="/assets/js/jquery.min.js"></script>
+
+<script type="text/javascript" src="/assets/js/yes_no_ctrls.js"></script>
+<link rel="stylesheet" href="/assets/css/yes_no_ctrls.css" type="text/css">
+<script type="text/javascript" src="/assets/js/post_parameters.js"></script>
+<script type="text/javascript" src="/assets/js/generic_ajaxrequest.js"></script>
+<script type="text/javascript" src="/assets/js/moment.js"></script>
+<script type="text/javascript" src="/assets/js/alertifyjs/alertify.js"></script>
+<!--script type="text/javascript" src="/assets/js/does_connection_exist.js"></script-->
+<link rel="stylesheet" href="/assets/css/provider.css" type="text/css">
+<script type="text/javascript" src="/assets/js/provider.js  "></script>
+
+<link rel="stylesheet" href="/assets/css/alertifyjs/css/alertify.css" type="text/css">
+
+
+<link rel="stylesheet" href="clinical_assessment.css" type="text/css">
+<script type="text/javascript" src="clinical_assessment.js"></script>
+
+
+
+<body id="mateme">
+  <div id="container">
+      <div id="content">
+  
+          <form>
+            <!-- checkIfInBDMode(); -->
+
+              <input type="text" name="summary"
+                     tt_onLoad="__$('keyboard').style.display = 'none';addCxCaYesNo();checkIfInBDMode();newCxCaClient();"
+                     tt_pageStyleClass="NoControls" helpText="Ever had CxCa screening" optional="true"/>
+  
+              <input type="text" name="summary"
+                     tt_onLoad="__$('keyboard').style.display = 'none';setNextBTN();addCxCaResultsAvailableYesNo();"
+                     condition="showResultsAvailable() == true;"
+                     tt_pageStyleClass="NoControls" helpText="Results available" optional="true"/>
+ 
+                     
+
+
+
+
+
+
+
+                <!--    Previous VIA data starts ......................................................... --> 
+              
+
+                <select objectType="location" ajaxURL="/locations?name=" allowFreeText="true"
+                    condition="enterPreviousCxCaData() == true;"
+                    field_type="alpha" helpText="CxCa screening location" id="cxca_location"
+                    name="cxca_location"
+                    tt_onUnLoad="hideCategory();"
+                    tt_onLoad="ShowCategory2('Previous CxCa screening');">
+                </select>
+
+
+                <input condition="enterPreviousCxCaData() == true;" 
+                    field_type="number"
+                    helpText="Previous CxCa test year" 
+                    id="cxca_test_year"
+                    name="cxca_test_year"
+                    tt_onLoad="$('Unknown').style.display = 'inline';ShowCategory2('Previous CxCa screening');"
+                    tt_onUnLoad="hideCategory();"
+                    tt_pageStyleClass="Numeric NumbersOnly" type="text"/>
+
+
+                <select allowFreeText="false" condition="enterPreviousCxCaData() == true && $('cxca_test_year').value.toUpperCase() == 'UNKNOWN'"
+                    helpText="Estimated time since last CxCa screening" id="previous_cxca_date_estimation"
+                    name="previous_cxca_date_estimation" ttMatchFromBeginning="true"
+                    tt_onLoad="ShowCategory2('Previous CxCa screening');"
+                    tt_onUnLoad="hideCategory();">
+                    <option value=""></option>
+                    <option value="6 months">6 months</option>
+                    <option value="12 months">12 months</option>
+                    <option value="18 months">18 months</option>
+                    <option value="24 months">24 months</option>
+                    <option value="Over 2 years">Over 2 years</option>
+                </select>
+
+                <select condition="$('cxca_test_year').value.toLowerCase() != 'unknown' && enterPreviousCxCaData() == true;"
+                    helpText="CxCa test month" id="cxca_test_month"
+                    name="cxca_test_month"
+                    tt_onUnLoad="hideCategory();"
+                    tt_onLoad="ShowCategory2('Previous CxCa screening');__$('keyboard').style.display = 'none';configureCxCaTestMonthCSS();ShowCategory2('Previous CxCa screening');">
+                    <option value=""></option>
+                    <option value="1">Jan</option>
+                    <option value="2">Feb</option>
+                    <option value="3">Mar</option>
+                    <option value="4">Apr</option>
+                    <option value="5">May</option>
+                    <option value="6">Jun</option>
+                    <option value="7">Jul</option>
+                    <option value="8">Aug</option>
+                    <option value="9">Sep</option>
+                    <option value="10">Oct</option>
+                    <option value="11">Nov</option>
+                    <option value="12">Dec</option>
+                    <!--<option value="Unknown">Unknown</option>-->
+                </select>
+
+                <input condition="enterPreviousCxCaData() == true && $('cxca_test_year').value.toLowerCase() != 'unknown';"
+                   field_type="number" 
+                   helpText="CxCa test day" id="cxca_test_day"
+                   name="cxca_test_day"
+                   tt_onLoad="ShowCategory2('Previous CxCa screening');getDayOfMonthPicker($('cxca_test_year').value, $('cxca_test_month').value);$('nextButton').style.display = 'block';"
+                   tt_onUnLoad="hideCategory();" type="text" />
+
+                <select allowFreeText="false" helpText="Previous Screening Method" 
+                   id="previous_screening_method" name="screening_method" 
+                   condition="enterPreviousCxCaData() == true;"
+                   tt_onLoad="ShowCategory2('Previous CxCa screening');" key="previous_screening_method" 
+                   tt_onUnLoad="hideCategory();">
+                   <option value=""></option>
+                   <option value="VIA">VIA</option>
+                   <option value="PAP Smear">PAP Smear</option>
+                   <option value="HPV DNA">HPV DNA</option>
+                   <option value="Speculum Exam">Speculum Exam</option>
+                </select>
+
+                <!--    Previous VIA data ends ......................................................... --> 
+
+
+
+              <input type="text" name="summary"
+                     tt_onLoad="__$('keyboard').style.display = 'none';addOfferCxCaYesNo();"
+                     tt_pageStyleClass="NoControls" helpText="Offer CxCa screening" optional="true"/>
+                    
+               <select allowFreeText="false" helpText="Screening Method" 
+                 id="screening_method" name="screening_method" 
+                 condition="offerCxCaScreening() == true;"
+                 tt_onLoad="" key="screening_method">
+                 <option value=""></option>
+                 <option value="VIA">VIA</option>
+                 <option value="PAP Smear">PAP Smear</option>
+                 <option value="HPV DNA">HPV DNA</option>
+                 <option value="Speculum Exam">Speculum Exam</option>
+              </select>
+
+              
+               <select allowFreeText="false" helpText="Treatment Status" 
+                 id="treatment_status" name="treatment_status" 
+                 condition="offerCxCaScreening() == true"
+                 tt_onLoad="endNextBTN();" key="via_test_results">
+                 <option value=""></option>
+                 <option value="Same day Treatment">Same day Treatment</option>
+                 <option value="Postponed Treatment">Postponed Treatment</option>
+                 <!--<option value="Postponed Treatment Performed">Postponed Treatment Performed</option>-->
+                 <option value="Referral">Referral</option>
+              </select>
+
+
+              <select allowFreeText="false" helpText="Reason for denying CxCa screening" 
+                  id="reason_for_no_cxca" name="reason_for_no_cxca" 
+                  condition="offerCxCaScreening() == false"
+                  tt_onLoad="setReasonForNoVIA();" key="reason_for_no_cxca">
+                  <option value=""></option>
+                  <option value="Client preferred counseling">Client preferred counseling</option>
+                  <option value="Not applicable">Not applicable</option>
+              </select>
+              
+          </form>
+  
+      </div>
+  </div>
+
+  <div id="page-load-cover"></div>
+  
+  </body>
