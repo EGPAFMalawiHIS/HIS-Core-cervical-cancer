@@ -9,23 +9,23 @@ function showPostponedReason() {
 }
 
 function showReferralReason() {
-  let select_treatment = $('select_treatment').value;
-  return (select_treatment == 'Referral' ? true :  false);
+  let treatment_option = $('treatment_option').value;
+  return (treatment_option == 'Referral' ? true :  false);
 }
 
 function changeNextButton(){
   let inputFrame = $('inputFrame' +  tstCurrentPage);
   inputFrame.style = "width: 95.5%;";
   let nextBTN = $('nextButton');
-  nextBTN.setAttribute("onmousedown", "createEncounter();");
+  nextBTN.setAttribute("onmousedown", "positiveResult();");
   nextBTN.innerHTML = "<span>Finish</span>";
 }
 
-function addOtherOptionsWait() {
+/*function addOtherOptionsWait() {
   let inputFrame = $('inputFrame' +  tstCurrentPage);
   inputFrame.style = "width: 95.5%;";
   setTimeout(addOtherOptions(), 500);
-}
+}*/
 
 function addOtherOptions() {
   let options = $('tt_currentUnorderedListOptions').getElementsByTagName('li');
@@ -39,8 +39,8 @@ function changeBTNext(e){
   let select_option = e.getAttribute('tstvalue');
   let nextBTN = $('nextButton');
   
-  if(select_option ==  "Yes"){
-    nextBTN.setAttribute("onmousedown", "createEncounter();");
+  if(select_option ==  "Same day Treatment"){
+    nextBTN.setAttribute("onmousedown", "positiveResult();");
     nextBTN.innerHTML = "<span>Finish</span>";
   }else{
     nextBTN.setAttribute("onmousedown", "gotoNextPage();");
@@ -69,7 +69,7 @@ const viaReferralReasons = {
 }
 
 function  createEncounter(){
-
+/*
   let selected_option = $('select_treatment').value;
   if(selected_option == 'Cryo' || selected_option == 'Thermocoagulation'){
 
@@ -123,13 +123,16 @@ function  createEncounter(){
   }
 
   submitParameters(encounter, "/encounters", "postObs");
+  */
 }
 
+/*
 function postObs(encounter){
   observations.encounter_id = encounter.encounter_id;
 
   submitParameters(observations, "/observations", "nextPage");
 }
+*/
 
 function nextPage(obs){
   //window.location.href = "/views/patient_dashboard.html?patient_id=" + sessionStorage.patientID;
@@ -159,7 +162,8 @@ function fetchScreeningMthod(concept_id){
           if (this.status == 200) {
               let concept = JSON.parse(this.responseText);
               if(concept){
-                loadTreatmentOptions(concept.concept_names[0].name)
+                global_screening_method = concept.concept_names[0].name;
+                loadTreatmentOptions(global_screening_method)
               }
           }
       }
@@ -182,8 +186,10 @@ function fetchTreatmentOptions(){
       if (this.readyState == 4) {
           if (this.status == 200) {
               let obs = JSON.parse(this.responseText);
-              if(obs){
+              if(obs.length > 0){
                 fetchScreeningMthod(obs[0].value_coded);
+              }else{
+                window.location =  tt_cancel_destination;
               }
           }
       }
@@ -196,33 +202,66 @@ function fetchTreatmentOptions(){
   }
 }
 
+var global_screening_method;
+
+function resetTreatmentOptions(){
+  if(global_screening_method){
+    let options = __$('tt_currentUnorderedListOptions').getElementsByTagName('li');
+
+    for(let i = 0; i < options.length; i++){
+      let onlickOptions = "null; updateTouchscreenInputForSelect(this);";
+      onlickOptions  += "changeNextIfneccessary(this);"
+      options[i].setAttribute("onclick", onlickOptions); 
+    }
+  }
+}
+
 function loadTreatmentOptions(screening_method){
-  let select_treatment = $('screening_result');
+  let screening_result = $('screening_result');
+  let screening_result_main = $('tt_currentUnorderedListOptions');
   let options;
 
   if(screening_method.match(/via/i)){
-    options = ["Thermocoagulation","POSITIVE CRYO","Suspect Cancer"];
+    options = ["VIA Negative","VIA Positive","Suspect Cancer"];
   }else if(screening_method.match(/smear/i)){
     options = ["PAP Smear Normal","PAP Smear Abnormal"];
   }else if(screening_method.match(/HPV DNA/i)){
     options = ["HPV positive","HPV negative"];
   }else if(screening_method.match(/Speculum/i)){
-    options = ["Visble Lesion","No visble Lesion"];
+    options = ["Visible Lesion","No visible Lesion","Other Gynae"];
   }
 
-  addVIAoptions(select_treatment, options);
+  addVIAoptions(screening_result, options, screening_result_main);
   $('spinner').style = 'display: none;';
   $('cover').style = 'display: none;';
-  //gotoPage(tstCurrentPage);
 }
 
-function addVIAoptions(e, options){
-  for(let i = 0; i < options.length; i++){
-    let opt = document.createElement('option');
-    opt.innerHTML = options[i];
-    opt.setAttribute("value", options[i]);
-    e.appendChild(opt);
+function addVIAoptions(e, options, el){
+  let className = 'odd';
+
+  try {
+    for(let i = 0; i < options.length; i++){
+      let opt = document.createElement('option');
+      opt.innerHTML = options[i];
+      opt.setAttribute("value", options[i]);
+      e.appendChild(opt);
+
+      let li = document.createElement("li");
+      li.setAttribute("onmousedown","");
+      li.setAttribute("class", (className == 'odd'? "even": "odd"));
+      className = li.getAttribute("class");
+      li.innerHTML = options[i];
+      li.setAttribute("tstvalue", options[i]); 
+      li.setAttribute("id", i); 
+      let onlickOptions = "null; updateTouchscreenInputForSelect(this);";
+      onlickOptions  += "changeNextIfneccessary(this);"
+      li.setAttribute("onclick", onlickOptions); 
+      el.appendChild(li);  
+    }
+  }catch(z){
+    window.location.reload();
   }
+
 }
 
 function disableENDbtn(){
@@ -235,5 +274,127 @@ function createScreeningResult(){
   console.log(screening_result);
   console.log(treatment_option);
 }
+
+function changeNextIfneccessary(e){
+  let nextButton =  __$('nextButton');
+  let selected_option = e.getAttribute('tstvalue');
+
+  if(selected_option.match(/Negative/i) || selected_option.match(/smear normal/i)
+    || selected_option.match(/No visible/i) || selected_option.match(/Suspect/i)){
+      nextButton.setAttribute("onmousedown","negativeResult();");
+      nextButton.innerHTML = "<span>Finish</span>";
+}else{
+    nextButton.setAttribute("onmousedown","gotoNextPage();");
+    nextButton.innerHTML = "<span>Next</span>";
+  }
+}
+
+function negativeResult(){
+  let encounter_obj = encounterOBJ();
+  submitParameters(encounter_obj, "/encounters", "postNegativeResults");
+}
+
+function postNegativeResults(encounter){
+  let treatment_option_text = __$('treatment_option').value;
+  let screening_result_text = __$('screening_result').value;
+
+  let screening_result_concept = negativeResultConcept(screening_result_text);
+  let treatment_option;
+
+  /*if(screening_result.match(/VIA/i) || screening_result.match(/Lesion/i)){
+    treatment_option = 10029;
+  }else{
+    treatment_option = treatmentOptions(treatment_option_text);
+  }*/
+  treatment_option = treatmentOptions(treatment_option_text);
+
+  let obs = {
+    encounter_id: encounter.encounter_id,
+    observations: [
+      {concept_id: 10040, value_coded: screening_result_concept},
+      {concept_id: 3567, value_coded: treatment_option}
+    ]
+  };
+
+  if(treatment_option_text.match(/referral/i)){
+    obs.observations.push({concept_id: 1739, value_coded: conceptReason(__$('referral_reason').value)})
+    obs.observations.push({concept_id: 10011, value_text: conceptReason(__$('referred_location').value)})
+  }else if(treatment_option_text.match(/postponed/i)){
+    obs.observations.push({concept_id: 10010, value_coded: conceptReason(__$('postponed_reason').value)})
+  }
+
+  submitParameters(obs, "/observations", "nextPage");
+}
+
+function conceptReason(reason){
+  let reasons = {
+    "Client NOT ready": 9998,
+    "Treatment not available": 9999,
+    "Other conditions": 2431,
+    "Unable to treat client": 10000
+  };
+  return reasons[reason];
+}
+
+
+function negativeResultConcept(concept_name){
+  let screening_results = {
+    "VIA Negative": 10041,
+    "Suspect Cancer": 10032,
+    "PAP Smear Normal": 10023,
+    "HPV negative": 10025,
+    "No visible Lesion": 10028,
+    "Other Gynae": 6537
+  };
+  return screening_results[concept_name];
+}
+
+function treatmentOptions(concept_name){
+  let treatment_options = {
+    "Same day Treatment": 10029,
+    "Postponed treatment": 9997,
+    "Referral": 9675
+  };
+  return treatment_options[concept_name];
+}
+
+function encounterOBJ(){
+  let currentTime = moment().format(' HH:mm:ss');
+  let encounter_datetime = moment(sessionStorage.sessionDate).format('YYYY-MM-DD');
+  encounter_datetime += currentTime;
+
+  return {
+      encounter_type_name: 'CxCa screening result',
+      encounter_type_id: 186,
+      patient_id: sessionStorage.patientID,
+      encounter_datetime: encounter_datetime
+  }
+}
+
+
+function positiveResult(){
+  let encounter_obj = encounterOBJ();
+  submitParameters(encounter_obj, "/encounters", "postPositiveResults");
+}
+
+/*function positiveResults(encounter){
+  let screening_result = positiveResultConcept(__$('screening_result').value);
+}*/
+
+function positiveResultConcept(concept_name){
+  let screening_results = {
+    "VIA Positive": 10042,
+    "PAP Smear Abnormal": 10024,
+    "HPV positive": 10026,
+    "Visible Lesion": 10027
+  };
+  return screening_results[concept_name];
+}
+
+
+
+
+
+
 
 fetchTreatmentOptions();

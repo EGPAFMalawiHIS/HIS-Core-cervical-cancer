@@ -144,15 +144,15 @@ defer="true"></script>
               </select>
 
               
-               <select allowFreeText="false" helpText="Treatment Status" 
-                 id="treatment_status" name="treatment_status" 
+               <select allowFreeText="false" helpText="Waiting for lab tests" 
+                 id="waiting_for_lab_tests" name="waiting_for_lab_tests" 
                  condition="offerCxCaScreening() == true"
-                 tt_onLoad="endNextBTN();" key="via_test_results">
+                 tt_onLoad="endNextBTN();" key="waiting_for_lab_tests">
                  <option value=""></option>
-                 <option value="Same day Treatment">Same day Treatment</option>
-                 <option value="Postponed Treatment">Postponed Treatment</option>
+                 <option value="Yes">Yes</option>
+                 <option value="No">No</option>
                  <!--<option value="Postponed Treatment Performed">Postponed Treatment Performed</option>-->
-                 <option value="Referral">Referral</option>
+                 <!--option value="Referral">Referral</option-->
               </select>
 
 
