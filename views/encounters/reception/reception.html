@@ -1,0 +1,48 @@
+
+<script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js"
+defer="true"></script>
+<!-- <script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/standard.js" defer="true"></script> -->
+<script type="text/javascript" src="/assets/js/jquery.min.js"></script>
+
+<script type="text/javascript" src="/assets/js/yes_no_ctrls.js"></script>
+<link rel="stylesheet" href="/assets/css/yes_no_ctrls.css" type="text/css">
+<script type="text/javascript" src="/assets/js/post_parameters.js"></script>
+<script type="text/javascript" src="/assets/js/generic_ajaxrequest.js"></script>
+<script type="text/javascript" src="/assets/js/moment.js"></script>
+<script type="text/javascript" src="/assets/js/alertifyjs/alertify.js"></script>
+<!--script type="text/javascript" src="/assets/js/does_connection_exist.js"></script-->
+<link rel="stylesheet" href="/assets/css/provider.css" type="text/css">
+<script type="text/javascript" src="/assets/js/provider.js  "></script>
+
+<link rel="stylesheet" href="/assets/css/alertifyjs/css/alertify.css" type="text/css">
+
+
+<link rel="stylesheet" href="reception.css" type="text/css">
+<script type="text/javascript" src="reception.js"></script>
+
+
+
+<body id="mateme">
+  <div id="container">
+      <div id="content">
+  
+        <form>
+
+          <select allowFreeText="false" 
+            helpText="Reason for Visit" id="reason_for_visit"
+            name="reason_for_visit" ttMatchFromBeginning="true"
+            tt_onLoad="__$('keyboard').style.display = 'none';addFinishBTN();" tt_onUnLoad="">
+            <option value=""></option>
+            <option value="Initial screening">Initial screening</option>
+            <option value="Postponed treatment">Postponed treatment</option>
+            <option value="One year subsequent check-up after treatment">One year subsequent check-up after treatment</option>
+            <option value="Subsequent screening">Subsequent screening</option>
+            <option value="Problem visit after treatment">Problem visit after treatment</option>
+            <option value="Referral">Referral</option>
+          </select>
+
+         </form>
+                     
+    </div>
+  </div>
+</body>

@@ -1,0 +1,39 @@
+#tt_page_ever_had_cxca_screening #clearButton, .tt_controls_ever_had_cxca_screening #clearButton {
+  display: none;
+}
+
+#tt_page_offer_cxca_creening #clearButton, .tt_controls_offer_cxca_screening #clearButton {
+  display: none;
+}
+
+#tt_page_results_available #clearButton, .tt_controls_results_available #clearButton {
+  display: none;
+}
+
+.#tt_page_via_test_month .inputFrameClass, .tt_controls_via_test_month .inputFrameClass{
+  height: 86%;
+}
+
+.#tt_page_via_test_month #viewport, .tt_controls_via_test_month #viewport {
+  height: 85%;
+}
+
+.inputFrameClass {
+  width: 95.5% !important;
+}
+
+
+
+
+
+#page-load-cover {
+  display: none;
+  position: absolute;
+  background-color: black;
+  width: 100%;
+  height: 102%;
+  left: 0%;
+  top: 0%;
+  z-index: 990;
+  opacity: 0.65;
+}

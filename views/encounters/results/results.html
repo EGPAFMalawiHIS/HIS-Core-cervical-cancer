@@ -1,0 +1,85 @@
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js"
+defer="true"></script>
+<!-- <script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/standard.js" defer="true"></script> -->
+<script type="text/javascript" src="/assets/js/jquery.min.js"></script>
+
+<script type="text/javascript" src="/assets/js/yes_no_ctrls.js"></script>
+<link rel="stylesheet" href="/assets/css/yes_no_ctrls.css" type="text/css">
+<script type="text/javascript" src="/assets/js/post_parameters.js"></script>
+<script type="text/javascript" src="/assets/js/generic_ajaxrequest.js"></script>
+<script type="text/javascript" src="/assets/js/moment.js"></script>
+<script type="text/javascript" src="/assets/js/alertifyjs/alertify.js"></script>
+<!--script type="text/javascript" src="/assets/js/does_connection_exist.js"></script-->
+<link rel="stylesheet" href="/assets/css/provider.css" type="text/css">
+<script type="text/javascript" src="/assets/js/provider.js  "></script>
+
+<link rel="stylesheet" href="/assets/css/alertifyjs/css/alertify.css" type="text/css">
+
+
+<link rel="stylesheet" href="results.css" type="text/css">
+<script type="text/javascript" src="results.js"></script>
+
+
+
+<body id="mateme">
+  <div id="container">
+    <div id="content">
+      <form>
+
+        <input type="text" name="summary"
+          tt_onLoad="__$('keyboard').style.display = 'none';fetchSelectedScreeningMethod();"
+            tt_pageStyleClass="NoControls" helpText="Selected screening method" optional="true"/>
+
+
+        <select allowFreeText="false" helpText="VIA Test Results" 
+        id="via_test_results" name="via_test_results" 
+        condition="offerCxCaScreening() == true && screeningMethod() == 'VIA';"
+        tt_onLoad="endNextBTN();" key="via_test_results">
+        <option value=""></option>
+        <option value="Negative">Negative</option>
+        <option value="Positive">Positive</option>
+        <option value="Suspect">Suspect</option>
+        </select>
+
+        <select allowFreeText="false" helpText="PAP Smear Results" 
+        id="pap_smear" name="pap_smear" 
+        condition="offerCxCaScreening() == true && screeningMethod() == 'PAP Smear';"
+        tt_onLoad="endNextBTN();" key="pap_smear">
+        <option value=""></option>
+        <option value="PAP Smear normal">PAP Smear normal</option>
+        <option value="PAP Smear abnormal">PAP Smear abnormal</option>
+        </select>
+
+        <select allowFreeText="false" helpText="HPV DNA Test Results" 
+        id="hpv_dna" name="hpv_dna" 
+        condition="offerCxCaScreening() == true && screeningMethod() == 'HPV DNA';"
+        tt_onLoad="endNextBTN();" key="hpv_dna">
+        <option value=""></option>
+        <option value="HPV negative">HPV negative</option>
+        <option value="HPV positive">HPV positive</option>
+        </select>
+
+        <select allowFreeText="false" helpText="Speculum Exam Results" 
+        id="speculum_exam" name="speculum_exam" 
+        condition="offerCxCaScreening() == true && screeningMethod() == 'Speculum Exam';"
+        tt_onLoad="endNextBTN();" key="speculum_exam">
+        <option value=""></option>
+        <option value="Visble Lesion">Visble Lesion</option>
+        <option value="No Visible Lesion">No Visible Lesion</option>
+        <option value="Other gynaecological condition">Other gynaecological condition</option>
+        </select>
+
+
+      </form>
+    </div>
+  </div>
+</body>

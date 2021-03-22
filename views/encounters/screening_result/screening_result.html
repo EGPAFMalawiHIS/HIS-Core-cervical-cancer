@@ -1,0 +1,107 @@
+
+
+
+
+<script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js"
+defer="true"></script>
+<!-- <script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/standard.js" defer="true"></script> -->
+<script type="text/javascript" src="/assets/js/jquery.min.js"></script>
+
+<!--script type="text/javascript" src="/assets/js/yes_no_ctrls.js"></script>
+<link rel="stylesheet" href="/assets/css/yes_no_ctrls.css" type="text/css"-->
+<script type="text/javascript" src="/assets/js/post_parameters.js"></script>
+<script type="text/javascript" src="/assets/js/generic_ajaxrequest.js"></script>
+<script type="text/javascript" src="/assets/js/moment.js"></script>
+<script type="text/javascript" src="/assets/js/alertifyjs/alertify.js"></script>
+<!--script type="text/javascript" src="/assets/js/does_connection_exist.js"></script-->
+<!--link rel="stylesheet" href="/assets/css/provider.css" type="text/css">
+<script type="text/javascript" src="/assets/js/provider.js  "></script-->
+
+<link rel="stylesheet" href="/assets/css/alertifyjs/css/alertify.css" type="text/css">
+
+
+<link rel="stylesheet" href="screening_result.css" type="text/css">
+<script type="text/javascript" src="screening_result.js"></script>
+
+<style>
+    #cover {
+        display: inline;
+        position: absolute;
+        background-color: black;
+        width: 100%;
+        height: 102%;
+        left: 0%;
+        top: 0%;
+        z-index: 990;
+        opacity: 0.65;
+    }
+
+    #spinner {
+        display: inline;
+        position: absolute;
+        top: 150px;
+        left: 40%;
+        z-index: 991;
+    }
+
+</style>
+
+
+<body id="mateme">
+  <div id="container">
+      <div id="content">
+  
+          <form>
+         
+              <select allowFreeText="false" helpText="Screening Result" 
+                 id="screening_result" name="screening_result" 
+                 tt_onLoad="__$('keyboard').style.display = 'none';resetTreatmentOptions();checkIfInBDMode();" 
+                 key="screening_result">
+                 <option value=""></option>
+              </select>
+
+              <select allowFreeText="false" helpText="Enter treatment option" 
+                 id="treatment_option" name="treatment_option" 
+                 tt_onLoad="disableENDbtn();addOtherOptions();" key="treatment_option">
+                 <option value=""></option>
+                 <option value="Same day Treatment">Same day Treatment</option>
+                 <option value="Postponed treatment">Postponed treatment</option>
+                 <option value="Referral">Referral</option>
+              </select>
+
+              <select allowFreeText="false" helpText="Select postponed reason" 
+                 id="postponed_reason" name="postponed_reason"
+                 condition="showPostponedReason() == true;" 
+                 tt_onLoad="changeNextButton();" key="postponed_reason">
+                 <option value=""></option>
+                 <option value="Client NOT ready">Client NOT ready</option>
+                 <option value="Treatment not available">Treatment not available</option>
+                 <option value="Other conditions">Other conditions</option>
+              </select>
+
+              <select allowFreeText="false" helpText="Select referral reason" 
+                 id="referral_reason" name="referral_reason" 
+                 condition="showReferralReason() == true;" 
+                 tt_onLoad="" key="referral_reason">
+                 <option value=""></option>
+                 <option value="Unable to treat client">Unable to treat client</option>
+                 <option value="Treatment not available">Treatment not available</option>
+                 <option value="Other conditions">Other conditions</option>
+              </select>
+
+              <select objectType="location" ajaxURL="/locations?name=" allowFreeText="true"
+                    condition="showReferralReason() == true;"
+                    field_type="alpha" helpText="Referred location" id="referred_location"
+                    name="observations[][value_coded_or_text]"
+                    tt_onLoad="changeNextButton()">
+              </select>
+
+
+          </form>
+  
+      </div>
+
+      <img src="/../../assets/images/formloader.gif" id="spinner" />  
+      <div id="cover"></div>
+  </div>
+</body>
