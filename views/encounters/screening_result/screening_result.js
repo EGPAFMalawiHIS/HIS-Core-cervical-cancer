@@ -299,11 +299,18 @@ function postNegativeResults(encounter){
   let screening_result_concept = negativeResultConcept(screening_result_text);
   let treatment_option = 10029;
 
-  let obs = {
+  /*let obs = {
     encounter_id: encounter.encounter_id,
     observations: [
       {concept_id: 10040, value_coded: screening_result_concept},
       {concept_id: 3567, value_coded: treatment_option}
+    ]
+  };*/
+
+  let obs = {
+    encounter_id: encounter.encounter_id,
+    observations: [
+      {concept_id: 10040, value_coded: screening_result_concept}
     ]
   };
 
