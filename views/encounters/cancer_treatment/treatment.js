@@ -74,7 +74,7 @@ var cancer_treatment_procedures = {
 }
 
 function submitEnc(){
-  final_selected_outcome = $('select_referral_outcome').value;
+  final_selected_outcome = __$('select_referral_outcome').value;
 
   if(final_selected_outcome.length < 1){
     showMessage("Please select outcome");
@@ -128,8 +128,8 @@ function createEncounter(){
   encounter_datetime += currentTime;
 
   let encounter = {
-      encounter_type_name: 'Cancer treatment',
-      encounter_type_id: 183,
+      encounter_type_name: 'CxCa treatment',
+      encounter_type_id: 182,
       patient_id: sessionStorage.patientID,
       encounter_datetime: encounter_datetime
   }
@@ -158,7 +158,6 @@ function postObs(encounter){
 function nextPage(obs){
   //window.location.href = "/views/patient_dashboard.html?patient_id=" + sessionStorage.patientID;
   nextEncounter(sessionStorage.patientID, sessionStorage.programID);
-  return;
 }
 
 

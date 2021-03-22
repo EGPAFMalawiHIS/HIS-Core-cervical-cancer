@@ -27,7 +27,7 @@
 
 
 #page-load-cover {
-  display: inline;
+  display: none;
   position: absolute;
   background-color: black;
   width: 100%;

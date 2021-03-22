@@ -31,10 +31,24 @@ defer="true"></script>
   
           <form>
             <!-- checkIfInBDMode(); -->
+            <select allowFreeText="false" 
+                helpText="Reason for Visit" id="reason_for_visit"
+                name="reason_for_visit" ttMatchFromBeginning="true"
+                tt_onLoad="__$('keyboard').style.display = 'none';" tt_onUnLoad="">
+                <option value=""></option>
+                <option value="Initial screening">Initial screening</option>
+                <option value="Postponed treatment">Postponed treatment</option>
+                <option value="One year subsequent check-up after treatment">One year subsequent check-up after treatment</option>
+                <option value="Subsequent screening">Subsequent screening</option>
+                <option value="Problem visit after treatment">Problem visit after treatment</option>
+                <option value="Referral">Referral</option>
+            </select>
 
               <input type="text" name="summary"
-                     tt_onLoad="__$('keyboard').style.display = 'none';addCxCaYesNo();checkIfInBDMode();newCxCaClient();"
-                     tt_pageStyleClass="NoControls" helpText="Ever had CxCa screening" optional="true"/>
+                     tt_onLoad="__$('keyboard').style.display = 'none';addCxCaYesNo();"
+                     tt_pageStyleClass="NoControls" 
+                     condition="__$('reason_for_visit').value != 'Initial screening';"
+                     helpText="Ever had CxCa screening" optional="true"/>
   
               <input type="text" name="summary"
                      tt_onLoad="__$('keyboard').style.display = 'none';setNextBTN();addCxCaResultsAvailableYesNo();"
@@ -135,7 +149,7 @@ defer="true"></script>
                <select allowFreeText="false" helpText="Screening Method" 
                  id="screening_method" name="screening_method" 
                  condition="offerCxCaScreening() == true;"
-                 tt_onLoad="" key="screening_method">
+                 tt_onLoad="addScreeningOptions();" key="screening_method">
                  <option value=""></option>
                  <option value="VIA">VIA</option>
                  <option value="PAP Smear">PAP Smear</option>

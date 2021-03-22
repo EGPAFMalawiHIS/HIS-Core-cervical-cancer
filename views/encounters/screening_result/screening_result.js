@@ -163,7 +163,7 @@ function fetchScreeningMthod(concept_id){
               let concept = JSON.parse(this.responseText);
               if(concept){
                 global_screening_method = concept.concept_names[0].name;
-                loadTreatmentOptions(global_screening_method)
+                setTimeout(function(){ loadTreatmentOptions(global_screening_method); }, 1000);
               }
           }
       }
@@ -217,8 +217,8 @@ function resetTreatmentOptions(){
 }
 
 function loadTreatmentOptions(screening_method){
-  let screening_result = $('screening_result');
-  let screening_result_main = $('tt_currentUnorderedListOptions');
+  let screening_result = document.getElementById('screening_result');
+  let screening_result_main = document.getElementById('tt_currentUnorderedListOptions');
   let options;
 
   if(screening_method.match(/via/i)){
@@ -295,18 +295,9 @@ function negativeResult(){
 }
 
 function postNegativeResults(encounter){
-  let treatment_option_text = __$('treatment_option').value;
   let screening_result_text = __$('screening_result').value;
-
   let screening_result_concept = negativeResultConcept(screening_result_text);
-  let treatment_option;
-
-  /*if(screening_result.match(/VIA/i) || screening_result.match(/Lesion/i)){
-    treatment_option = 10029;
-  }else{
-    treatment_option = treatmentOptions(treatment_option_text);
-  }*/
-  treatment_option = treatmentOptions(treatment_option_text);
+  let treatment_option = 10029;
 
   let obs = {
     encounter_id: encounter.encounter_id,
@@ -315,13 +306,6 @@ function postNegativeResults(encounter){
       {concept_id: 3567, value_coded: treatment_option}
     ]
   };
-
-  if(treatment_option_text.match(/referral/i)){
-    obs.observations.push({concept_id: 1739, value_coded: conceptReason(__$('referral_reason').value)})
-    obs.observations.push({concept_id: 10011, value_text: conceptReason(__$('referred_location').value)})
-  }else if(treatment_option_text.match(/postponed/i)){
-    obs.observations.push({concept_id: 10010, value_coded: conceptReason(__$('postponed_reason').value)})
-  }
 
   submitParameters(obs, "/observations", "nextPage");
 }
@@ -377,10 +361,6 @@ function positiveResult(){
   submitParameters(encounter_obj, "/encounters", "postPositiveResults");
 }
 
-/*function positiveResults(encounter){
-  let screening_result = positiveResultConcept(__$('screening_result').value);
-}*/
-
 function positiveResultConcept(concept_name){
   let screening_results = {
     "VIA Positive": 10042,
@@ -391,8 +371,30 @@ function positiveResultConcept(concept_name){
   return screening_results[concept_name];
 }
 
+function postPositiveResults(encounter){
+  let treatment_option_text = __$('treatment_option').value;
+  let screening_result_text = __$('screening_result').value;
 
+  let screening_result_concept = positiveResultConcept(screening_result_text);
+  let treatment_option = treatmentOptions(treatment_option_text);
 
+  let obs = {
+    encounter_id: encounter.encounter_id,
+    observations: [
+      {concept_id: 10040, value_coded: screening_result_concept},
+      {concept_id: 3567, value_coded: treatment_option}
+    ]
+  };
+
+  if(treatment_option_text.match(/referral/i)){
+    obs.observations.push({concept_id: 1739, value_coded: conceptReason(__$('referral_reason').value)})
+    obs.observations.push({concept_id: 10011, value_text: conceptReason(__$('referred_location').value)})
+  }else if(treatment_option_text.match(/postponed/i)){
+    obs.observations.push({concept_id: 10010, value_coded: conceptReason(__$('postponed_reason').value)})
+  }
+
+  submitParameters(obs, "/observations", "nextPage");
+}
 
 
 

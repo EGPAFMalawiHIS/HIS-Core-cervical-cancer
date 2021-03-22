@@ -15,7 +15,7 @@
       "activitiesIcon": "../assets/images/first-aid-kit.png",
       "url": "/apps/CxCa/views/encounters/screening_result/screening_result.html"
     },
-   "cancer treatment": {
+   "cxca treatment": {
       "available": true,
       "activitiesIcon": "../assets/images/cancer.png",
       "url": "/apps/CxCa/views/encounters/cancer_treatment/treatment.html"

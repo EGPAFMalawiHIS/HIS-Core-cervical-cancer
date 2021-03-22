@@ -34,8 +34,14 @@ function addCxCaResultsAvailableYesNo() {
 
 
 function showResultsAvailable(){
-  let everHadVIA = yesNo_Hash['CxCa screening']['Ever had CxCa screening?'];
-  return (everHadVIA == "Yes" ? true : false);
+  if(__$('reason_for_visit').value == 'Initial screening'){
+    yesNo_Hash['CxCa screening'] = {};
+    yesNo_Hash['CxCa screening']['Ever had CxCa screening?'] = 'No'
+    return false;
+  }else{
+    let everHadVIA = yesNo_Hash['CxCa screening']['Ever had CxCa screening?'];
+    return (everHadVIA == "Yes" ? true : false);
+  }
 }
 
 function checkIfresultsAvailable(){
@@ -105,6 +111,7 @@ function calculateEstimatedDate(period){
 }
 
 function submitParams(){
+  let waiting_for_lab_tests = __$('waiting_for_lab_tests').value;
 
   if(yesNo_Hash["CxCa screening"]["Ever had CxCa screening?"] ==  'Yes' && 
     yesNo_Hash["CxCa results available"]["Results available?"] == "Yes" && 
@@ -116,7 +123,6 @@ function submitParams(){
       let cxca_date_estimated = 0;
       let previous_screening_method = CxCaScreeningMethods[$('previous_screening_method').value];
       let treatment_status = treatmentStatus[$('touchscreenInput' + tstCurrentPage).value];
-      let waiting_for_lab_tests = __$('waiting_for_lab_tests').value;
       waiting_for_lab_tests = (waiting_for_lab_tests == 'No' ? 1066 : 1065);
 
       if(previous_cxca_year.toLowerCase() == 'unknown'){
@@ -223,7 +229,6 @@ function submitParams(){
       yesNo_Hash["Offer CxCa screening"]["Offer CxCa screening?"] == "Yes"){
         let screening_method = CxCaScreeningMethods[$('screening_method').value];
         let treatment_status = treatmentStatus[$('touchscreenInput' + tstCurrentPage).value];
-        let waiting_for_lab_tests = __$('waiting_for_lab_tests').value;
         waiting_for_lab_tests = (waiting_for_lab_tests == 'No' ? 1066 : 1065);
 
         observations = {
@@ -240,7 +245,6 @@ function submitParams(){
 
   }else if(yesNo_Hash["Offer CxCa screening"]["Offer CxCa screening?"] == "Yes"){
     let screening_method = CxCaScreeningMethods[$('touchscreenInput' + tstCurrentPage).value];
-    let waiting_for_lab_tests = __$('waiting_for_lab_tests').value;
     waiting_for_lab_tests = (waiting_for_lab_tests == 'No' ? 1066 : 1065);
 
     observations = {
@@ -270,7 +274,6 @@ function submitParams(){
 
       let treatment_status = treatmentStatus[$('touchscreenInput' + tstCurrentPage).value];
       let screening_method = CxCaScreeningMethods[$('screening_method').value];
-      let waiting_for_lab_tests = __$('waiting_for_lab_tests').value;
       waiting_for_lab_tests = (waiting_for_lab_tests == 'No' ? 1066 : 1065);
 
       observations = {
@@ -304,8 +307,20 @@ function submitParams(){
     return;
   }
 
+  observations.observations.push(
+    {concept_id: 6189, value_coded: reason_for_visit_concept_ids[__$('reason_for_visit').value]}
+  );
   createEncounter(observations);
 }
+
+var reason_for_visit_concept_ids = {
+  "Initial screening": 10035,
+  "Postponed treatment": 9997,
+  "One year subsequent check-up after treatment": 10034,
+  "Subsequent screening": 10036,
+  "Problem visit after treatment": 10037,
+  "Referral": 9675
+};
 
 function createEncounter(observations){
   let currentTime = moment().format(' HH:mm:ss');
@@ -542,4 +557,29 @@ function offerCxCaScreening(){
   }catch(e){
     return false;
   }
+}
+
+function addScreeningOptions() {
+  let lists = __$('tt_currentUnorderedListOptions').getElementsByTagName('li');
+  for(let i = 0 ; i < lists.length; i++){
+    let opt = lists[i].getAttribute("onclick") + "changeNextOption(this);";
+    lists[i].setAttribute("onclick", opt);
+  }
+}
+
+function changeNextOption(e){
+  let nextBTN = __$('nextButton');
+
+  if(e.innerHTML.match(/VIA/i) || e.innerHTML.match(/Exam/i)){
+    nextBTN.setAttribute("onmousedown", "sameDayScreening();")
+    nextBTN.innerHTML = "<span>Finish</span>";
+  }else{
+    nextBTN.setAttribute("onmousedown", "gotoNextPage();")
+    nextBTN.innerHTML = "<span>Next</span>";
+  }
+}
+
+function sameDayScreening(){
+  __$('waiting_for_lab_tests').value = 'No';
+  submitParams();
 }
