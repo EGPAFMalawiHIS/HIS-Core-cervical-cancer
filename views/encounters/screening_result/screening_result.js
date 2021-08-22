@@ -283,7 +283,7 @@ function changeNextIfneccessary(e){
     || selected_option.match(/No visible/i) || selected_option.match(/Suspect/i)){
       nextButton.setAttribute("onmousedown","negativeResult();");
       nextButton.innerHTML = "<span>Finish</span>";
-}else{
+  }else{
     nextButton.setAttribute("onmousedown","gotoNextPage();");
     nextButton.innerHTML = "<span>Next</span>";
   }
@@ -296,8 +296,8 @@ function negativeResult(){
 
 function postNegativeResults(encounter){
   let screening_result_text = __$('screening_result').value;
-  let screening_result_concept = negativeResultConcept(screening_result_text);
-  let treatment_option = 10029;
+  let screening_result_concept = resultConcept(screening_result_text);
+  /*let treatment_option = 10029;
 
   /*let obs = {
     encounter_id: encounter.encounter_id,
@@ -314,6 +314,9 @@ function postNegativeResults(encounter){
     ]
   };
 
+  if(screening_result_text.match(/HPV positive/i))
+    addHPVVIAdata(obs.observations);
+
   submitParameters(obs, "/observations", "nextPage");
 }
 
@@ -328,14 +331,18 @@ function conceptReason(reason){
 }
 
 
-function negativeResultConcept(concept_name){
+function resultConcept(concept_name){
   let screening_results = {
     "VIA Negative": 10041,
     "Suspect Cancer": 10032,
     "PAP Smear Normal": 10023,
     "HPV negative": 10025,
     "No visible Lesion": 10028,
-    "Other Gynae": 6537
+    "Other Gynae": 6537,
+    "VIA Positive": 10042,
+    "PAP Smear Abnormal": 10024,
+    "HPV positive": 10026,
+    "Visible Lesion": 10027
   };
   return screening_results[concept_name];
 }
@@ -368,21 +375,11 @@ function positiveResult(){
   submitParameters(encounter_obj, "/encounters", "postPositiveResults");
 }
 
-function positiveResultConcept(concept_name){
-  let screening_results = {
-    "VIA Positive": 10042,
-    "PAP Smear Abnormal": 10024,
-    "HPV positive": 10026,
-    "Visible Lesion": 10027
-  };
-  return screening_results[concept_name];
-}
-
 function postPositiveResults(encounter){
   let treatment_option_text = __$('treatment_option').value;
   let screening_result_text = __$('screening_result').value;
 
-  let screening_result_concept = positiveResultConcept(screening_result_text);
+  let screening_result_concept = resultConcept(screening_result_text);
   let treatment_option = treatmentOptions(treatment_option_text);
 
   let obs = {
@@ -400,9 +397,40 @@ function postPositiveResults(encounter){
     obs.observations.push({concept_id: 10010, value_coded: conceptReason(__$('postponed_reason').value)})
   }
 
+  if(screening_result_text.match(/HPV positive/i))
+    addHPVVIAdata(obs.observations);
+
   submitParameters(obs, "/observations", "nextPage");
 }
 
+function addHPVVIAdata(ob){
+  let offer_via = __$('offer_via').value;
+
+  if(offer_via.match(/yes/i)){
+    let via_screening_results = __$('via_screening_results').value;
+    if(via_screening_results == 'VIA negative'){
+      via_screening_results = 10041;
+    }else if(via_screening_results == 'VIA positive'){
+      via_screening_results = 10042;
+    }else if(via_screening_results == 'Suspect Cancer'){
+      via_screening_results = 10032;
+    }
+    ob.push({concept_id: 9522, value_coded: 1065});
+    ob.push({concept_id: 9514, value_coded: via_screening_results});
+  }else{
+    let reason_for_not_offering_via = __$('reason_for_not_offering_via').value;
+    if(reason_for_not_offering_via == 'Client NOT ready'){
+      reason_for_not_offering_via = 9998;
+    }else if(reason_for_not_offering_via == 'Treatment not available'){
+      reason_for_not_offering_via = 9999;
+    }else if(reason_for_not_offering_via == 'Other conditions'){
+      reason_for_not_offering_via = 5533;
+
+    }
+    ob.push({concept_id: 9522, value_coded: 1066});
+    ob.push({concept_id: 2431, value_coded: reason_for_not_offering_via});
+  }
+}
 
 
 

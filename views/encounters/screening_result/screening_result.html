@@ -60,6 +60,43 @@ defer="true"></script>
                  <option value=""></option>
               </select>
 
+
+              <!-- Offer VIA if HPV positive starts-->
+              <select allowFreeText="false" helpText="Offer VIA" 
+                 id="offer_via" name="treatment_option" 
+                 condition="__$('screening_result').value == 'HPV positive';"
+                 tt_onLoad="" key="offer_via">
+                 <option value=""></option>
+                 <option value="Yes">Yes</option>
+                 <option value="No">No</option>
+              </select>
+              
+              
+              <select allowFreeText="false" helpText="VIA screening results" 
+                 id="via_screening_results" name="via_screening_results" 
+                 condition="__$('offer_via').value == 'Yes';"
+                 tt_onLoad="resetTreatmentOptions();" key="offer_via">
+                 <option value=""></option>
+                 <option value="VIA negative">VIA negative</option>
+                 <option value="VIA positive">VIA positive</option>
+                 <option value="Suspect Cancer">Suspect Cancer</option>
+              </select>
+              
+              <select allowFreeText="false" helpText="Reason for <b>NOT</b> offering VIA" 
+                 id="reason_for_not_offering_via" name="reason_for_not_offering_via"
+                 condition="__$('offer_via').value == 'No';"
+                 tt_onLoad="" key="reason_for_not_offering_via">
+                 <option value=""></option>
+                 <option value="Client NOT ready">Client NOT ready</option>
+                 <option value="Treatment not available">Treatment not available</option>
+                 <option value="Other conditions">Other conditions</option>
+              </select>
+
+              <!-- Offer VIA if HPV positive ends -->
+
+
+
+
               <select allowFreeText="false" helpText="Enter treatment option" 
                  id="treatment_option" name="treatment_option" 
                  tt_onLoad="disableENDbtn();addOtherOptions();" key="treatment_option">

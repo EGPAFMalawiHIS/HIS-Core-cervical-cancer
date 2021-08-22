@@ -144,7 +144,9 @@ defer="true"></script>
 
               <input type="text" name="summary"
                      tt_onLoad="__$('keyboard').style.display = 'none';addOfferCxCaYesNo();"
-                     tt_pageStyleClass="NoControls" helpText="Offer CxCa screening" optional="true"/>
+                     tt_pageStyleClass="NoControls" 
+                     condition="art_offer_cxca_data == false"
+                     helpText="Offer CxCa screening" optional="true"/>
                     
                <select allowFreeText="false" helpText="Screening Method" 
                  id="screening_method" name="screening_method" 

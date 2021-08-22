@@ -583,3 +583,46 @@ function sameDayScreening(){
   __$('waiting_for_lab_tests').value = 'No';
   submitParams();
 }
+
+var art_offer_cxca_data = false;
+
+function ARTofferCxCa() {
+  let url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1";
+  url += '/observations?concept_id=9992&person_id=' + sessionStorage.patientID;
+  url += 'page=0&page_size=1&obs_datetime=' + sessionStorage.sessionDate;
+
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+  if (this.readyState == 4 ) {
+      if (this.status == 201 || this.status == 200 ) {
+          let result = JSON.parse(this.responseText);
+          if(result){
+            if(result.length > 0){
+              art_offer_cxca_data = (result[0].value_coded == 1065 ? true : false);
+              if(art_offer_cxca_data)
+                setOfferCxCa();
+
+            }
+          }
+      }
+  }
+  };
+  xhttp.open("GET", url, true);
+  xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+  xhttp.setRequestHeader('Content-type', "application/json");
+  xhttp.send();
+}
+
+function setOfferCxCa(){
+  yesNo_Hash = {};
+  yesNo_Hash["Offer CxCa screening"] = {};
+  yesNo_Hash["Offer CxCa screening"]["Offer CxCa screening?"] = 'Yes';
+}
+
+ARTofferCxCa();
+
+
+
+
+
+
