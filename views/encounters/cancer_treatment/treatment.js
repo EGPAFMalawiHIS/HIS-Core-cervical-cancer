@@ -70,6 +70,8 @@ var cancer_treatment_procedures = {
   'Surgery': 5685,
   'Chemotherapy': 10001,
   'Palliative care': 9053,
+  'Leep': 10002,
+  'Thermo': 10003, 
   'Other': 6408
 }
 
@@ -94,7 +96,7 @@ function submitEnc(){
 function  updateOutcome(){
   let outcome = {
     location_id: locations[sessionStorage.currentLocation],
-    state: fetched_states[final_selected_outcome],
+    state: fetched_states['Pre CxCa treatment'],
     date: sessionStorage.sessionDate
   }
   let state = JSON.stringify(outcome);
@@ -138,7 +140,15 @@ function createEncounter(){
 }
 
 function postObs(encounter){
+  let procedure_name = document.getElementById("touchscreenInput" + tstCurrentPage).value
+
   let observations = {
+    encounter_id: encounter.encounter_id,
+    observations: [
+      {concept_id: 10015, value_coded: cancer_treatment_procedures[procedure_name]}
+    ]
+  };
+  /*let observations = {
     encounter_id: encounter.encounter_id,
     observations: [
       {concept_id: 6538, value_coded: outcome_concepts[final_selected_outcome]}
@@ -150,7 +160,7 @@ function postObs(encounter){
       concept_id: 10015, 
       value_coded: cancer_treatment_procedures[$('select_cancer_treatment').value]
     })
-  }
+  }*/
 
   submitParameters(observations, "/observations", "nextPage"); 
 }

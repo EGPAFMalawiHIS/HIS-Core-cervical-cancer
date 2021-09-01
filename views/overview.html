@@ -19,16 +19,24 @@
   width: 96%;
 }
 
-.stat-boxes {
-  background-color: #ccc;
-  text-align: right;
+.stat-boxes th {
+  height: 40px;
 }
 
-th {
-  padding-right: 15px;
-  height: 40px;
-  color: black;
+.screening-names {
+  text-align: left !important;
+  padding-left: 5px !important;
+  border-style: solid;
+  border-width: 0px 0px 1px 0px;
 }
+
+.counts {
+  text-align: right !important;
+  padding-right: 5px !important;
+  border-style: solid;
+  border-width: 0px 0px 1px 0px;
+}
+
 </style>
 
 <div id='lab-stats'>
@@ -36,9 +44,8 @@ th {
 <table id='lab-stats-table'>
   <thead>
     <tr class='stat-boxes'>
-      <th>Ordered</th>
-      <th>Screened</th>
-      <th>VIA test positive</th>
+      <th>Screening method</th>
+      <th>Count</th>
     </tr>
   </thead>
 </table>
@@ -49,7 +56,9 @@ th {
 <script>
 
 function dashboardStats(stats) {
-  console.log(stats);
+  for(const name in stats){
+    data_table.row.add([name, stats[name]]).draw();
+  }
 }
 
 function fetchDashboardStats() {
@@ -77,10 +86,16 @@ function initializeTable() {
       fixedHeader: true,
       searching: false,
       paging: false,
+      info: false,
       scrollY: 310,
       scroller: {
           loadingIndicator: true
-      }
+      },
+      columnDefs: [
+        {"className": "screening-names", "targets": 0},
+        {"className": "counts", "targets": 1}
+      ],
+      order: [[0, 'asc']]
   });
 }
 

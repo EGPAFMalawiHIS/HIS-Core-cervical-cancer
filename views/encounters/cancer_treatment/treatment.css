@@ -1,4 +1,6 @@
-
+.keyboard {
+  display: none !important;
+}
 
 #page-load-cover {
   display: inline;
@@ -10,4 +12,8 @@
   top: 0%;
   z-index: 990;
   opacity: 0.65;
+}
+
+.inputFrameClass {
+  width: 96% !important;
 }
