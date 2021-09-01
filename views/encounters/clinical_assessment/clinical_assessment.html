@@ -44,6 +44,68 @@ defer="true"></script>
                 <option value="Referral">Referral</option>
             </select>
 
+            <!-- HIV Status -->
+            <select allowFreeText="false" 
+                helpText="HIV status" id="hiv_status"
+                name="hiv_status" ttMatchFromBeginning="true"
+                condition="isHashEmpty(hiv_status_details) == true;"
+                tt_onLoad="__$('keyboard').style.display = 'none';" tt_onUnLoad="">
+                <option value=""></option>
+                <option value="Positive ON ART">Positive ON ART</option>
+                <option value="Positive NOT on ART">Positive NOT on ART</option>
+                <option value="Negative">Negative</option>
+                <option value="Never tested">Never tested</option>
+                <option value="Prefers NOT to disclose">Prefers NOT to disclose</option>
+            </select>
+
+            <input condition="enterHIVtestDate() == true;" 
+            field_type="number"
+            helpText="HIV test year" 
+            id="hiv_test_year"
+            name="hiv_test_year"
+            tt_onLoad="$('Unknown').style.display = 'inline';"
+            tt_onUnLoad="hideCategory();"
+            tt_pageStyleClass="Numeric NumbersOnly" type="text"/>
+
+
+            <select allowFreeText="false" condition="enterHIVtestDate() == true && $('hiv_test_year').value.toUpperCase() == 'UNKNOWN'"
+                helpText="Estimated time since last HIV test" id="hiv_test_date_estimation"
+                name="hiv_test_date_estimation" ttMatchFromBeginning="true">
+                <option value=""></option>
+                <option value="6 months">6 months</option>
+                <option value="12 months">12 months</option>
+                <option value="18 months">18 months</option>
+                <option value="24 months">24 months</option>
+                <option value="Over 2 years">Over 2 years</option>
+            </select>
+
+            <select condition="$('hiv_test_year').value.toLowerCase() != 'unknown' && enterHIVtestDate() == true;"
+                helpText="HIV test month" id="hiv_test_month"
+                name="hiv_test_month"
+                tt_onLoad="__$('keyboard').style.display = 'none';">
+                <option value=""></option>
+                <option value="1">Jan</option>
+                <option value="2">Feb</option>
+                <option value="3">Mar</option>
+                <option value="4">Apr</option>
+                <option value="5">May</option>
+                <option value="6">Jun</option>
+                <option value="7">Jul</option>
+                <option value="8">Aug</option>
+                <option value="9">Sep</option>
+                <option value="10">Oct</option>
+                <option value="11">Nov</option>
+                <option value="12">Dec</option>
+            </select>
+
+            <input condition="enterHIVtestDate() == true && $('hiv_test_year').value.toLowerCase() != 'unknown';"
+                   field_type="number" 
+                   helpText="HIV test day" id="hiv_test_day"
+                   name="hiv_test_day"
+                   tt_onLoad="getDayOfMonthPicker($('hiv_test_year').value, $('hiv_test_month').value);$('nextButton').style.display = 'block';"
+                   type="text" />
+            <!-- HIV Status end -->
+
               <input type="text" name="summary"
                      tt_onLoad="__$('keyboard').style.display = 'none';addCxCaYesNo();"
                      tt_pageStyleClass="NoControls" 

@@ -307,10 +307,51 @@ function submitParams(){
     return;
   }
 
+  let hiv_statuses = {
+    'Positive ON ART': 10017,
+    'Positive NOT on ART': 10018,
+    'Negative': 664,
+    'Never tested': 9432,
+    'Prefers NOT to disclose': 6279,
+  }
+  
+  if(isHashEmpty(hiv_status_details)){
+    let hiv_status = hiv_statuses[__$('hiv_status').value];
+    let hiv_test_date_estimated = false;
+    let hiv_test_date;
+    let hiv_test_year = __$('hiv_test_year').value;
+    
+    if(hiv_test_year.toLowerCase() == 'unknown'){
+      hiv_test_date = calculateEstimatedDate($('hiv_test_date_estimation').value);
+      hiv_test_date_estimated = true;
+    }else{
+      let hiv_test_month = __$('hiv_test_month').value;
+      let hiv_test_day = __$('hiv_test_day').value;
+      hiv_test_date = moment(`${hiv_test_year}-${hiv_test_month}-${hiv_test_day}`).format("YYYY-MM-DD");
+    }
+    observations.observations.push({concept_id: 3753, value_coded: hiv_status});
+    if(hiv_test_date_estimated){
+      observations.observations.push({concept_id: 1837, 
+        value_coded: hiv_test_date, 
+        value_text: `Date estimated: ${$('hiv_test_date_estimation').value}`});
+    }else{
+      observations.observations.push({concept_id: 1837, value_coded: hiv_test_date});
+    }
+  }else{
+    let hiv_status = 10018;
+    let states = hiv_status_details.patient_states;
+    for(stat of states){
+      if(stat.name.match(/On antiretrovirals/i))
+        hiv_status = 10017;
+
+    }
+    observations.observations.push({concept_id: 3753, value_coded: hiv_status});
+  }
+
   observations.observations.push(
     {concept_id: 6189, value_coded: reason_for_visit_concept_ids[__$('reason_for_visit').value]}
   );
-  createEncounter(observations);
+  createEncounter();
 }
 
 var reason_for_visit_concept_ids = {
@@ -322,7 +363,7 @@ var reason_for_visit_concept_ids = {
   "Referral": 9675
 };
 
-function createEncounter(observations){
+function createEncounter(){
   let currentTime = moment().format(' HH:mm:ss');
   let encounter_datetime = moment(sessionStorage.sessionDate).format('YYYY-MM-DD');
   encounter_datetime += currentTime;
@@ -343,7 +384,7 @@ function postObs(encounter){
   submitParameters(observations, "/observations", "changeState");
 }
 
-function changeState(obs){
+function changeState(){
   let outcome = {
     location_id: locations[sessionStorage.currentLocation],
     state: 185,
@@ -359,7 +400,7 @@ function changeState(obs){
   req.onreadystatechange = function () {
       if (this.readyState == 4) {
           if (this.status == 201) {
-            let obs = JSON.parse(this.responseText);
+            //let obs = JSON.parse(this.responseText);
             nextPage();  
           }
       }
@@ -619,7 +660,46 @@ function setOfferCxCa(){
   yesNo_Hash["Offer CxCa screening"]["Offer CxCa screening?"] = 'Yes';
 }
 
+var hiv_status_details = {};
+
+function HIVststus(){
+  let url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1";
+  url += `/patients/${sessionStorage.patientID}/programs`
+
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+  if (this.readyState == 4 ) {
+      if (this.status == 201 || this.status == 200 ) {
+          let results = JSON.parse(this.responseText);
+          if(results){
+            for(let result of results){
+              if(result.program.name.match(/HIV program/i))
+                hiv_status_details = result;
+
+            }
+          }
+      }
+  }
+  };
+  xhttp.open("GET", url, true);
+  xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+  xhttp.setRequestHeader('Content-type', "application/json");
+  xhttp.send();
+}
+
+function enterHIVtestDate(){
+  if(isHashEmpty(hiv_status_details)){
+    let hiv_status = document.getElementById('hiv_status').value;
+    if(hiv_status.match(/Negative|ART/i))
+      return true;
+  }
+
+  return false;
+}
+
+
 ARTofferCxCa();
+HIVststus();
 
 
 
