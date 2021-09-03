@@ -68,10 +68,10 @@ var observations;
 var final_selected_outcome = '';
 var cancer_treatment_procedures = {
   'Surgery': 5685,
-  'Chemotherapy': 10001,
+  'Cryotherapy': 10521,
   'Palliative care': 9053,
   'Leep': 10002,
-  'Thermo': 10003, 
+  'Thermocoagulation': 9996, 
   'Other': 6408
 }
 

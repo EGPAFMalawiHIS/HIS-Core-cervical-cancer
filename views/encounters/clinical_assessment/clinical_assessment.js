@@ -315,8 +315,11 @@ function submitParams(){
     'Prefers NOT to disclose': 6279,
   }
   
-  if(isHashEmpty(hiv_status_details)){
-    let hiv_status = hiv_statuses[__$('hiv_status').value];
+  let hiv_status =  __$('hiv_status') ? __$('hiv_status').value : '';
+  
+  if(isHashEmpty(hiv_status_details) && hiv_status.match(/Never tested|Prefers NOT to disclose/)){
+    observations.observations.push({concept_id: 3753, value_coded: hiv_statuses[hiv_status]});
+  }else if(isHashEmpty(hiv_status_details)){
     let hiv_test_date_estimated = false;
     let hiv_test_date;
     let hiv_test_year = __$('hiv_test_year').value;
@@ -329,7 +332,7 @@ function submitParams(){
       let hiv_test_day = __$('hiv_test_day').value;
       hiv_test_date = moment(`${hiv_test_year}-${hiv_test_month}-${hiv_test_day}`).format("YYYY-MM-DD");
     }
-    observations.observations.push({concept_id: 3753, value_coded: hiv_status});
+    observations.observations.push({concept_id: 3753, value_coded: hiv_statuses[hiv_status]});
     if(hiv_test_date_estimated){
       observations.observations.push({concept_id: 1837, 
         value_coded: hiv_test_date, 
@@ -338,7 +341,7 @@ function submitParams(){
       observations.observations.push({concept_id: 1837, value_coded: hiv_test_date});
     }
   }else{
-    let hiv_status = 10018;
+    hiv_status = 10018;
     let states = hiv_status_details.patient_states;
     for(stat of states){
       if(stat.name.match(/On antiretrovirals/i))
