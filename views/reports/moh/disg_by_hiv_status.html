@@ -1,0 +1,290 @@
+<script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js" defer="true"></script>
+
+<script type="text/javascript" src="/assets/js/moment.js"></script>
+
+<script type="text/javascript" src="/assets/js/jquery.min.js"></script>
+
+<link rel="stylesheet" href="../../../../../assets/css/datatables/jquery.dataTables.min.css" type="text/css">
+<link rel="stylesheet" href="../../../../../assets/css/datatables/scroller.dataTables.min.css" type="text/css">
+
+<script type="text/javascript" src="../../../../../assets/js/datatables/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="../../../../../assets/js/datatables/dataTables.fixedHeader.min.js"></script>
+
+<!-- pring report start .......................................................................... -->
+<script type="text/javascript" src="../../../../../assets/js/datatables/dataTables.buttons.min.js"></script>
+<script type="text/javascript" src="../../../../../assets/js/datatables/buttons.flash.min.js"></script>
+<script type="text/javascript" src="../../../../../assets/js/datatables/jszip.min.js"></script>
+<script type="text/javascript" src="../../../../../assets/js/datatables/pdfmake.min.js"></script>
+<script type="text/javascript" src="../../../../../assets/js/datatables/vfs_fonts.js"></script>
+<script type="text/javascript" src="../../../../../assets/js/datatables/buttons.html5.min.js"></script>
+<script type="text/javascript" src="../../../../../assets/js/datatables/buttons.print.min.js"></script>
+<!-- pring report ends .......................................................................... -->
+
+
+<style>
+#clearButton, #cancelButton {
+  display: none;
+}
+
+.btn-primary {
+  display: block;
+  width: 115px;
+  height: 25px;
+  background: #4E9CAF;
+  padding: 10px;
+  text-align: center;
+  border-radius: 5px;
+  color: white;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+#clients th {
+  border-style: solid;
+  border-width: 0px 0px 1px 0px;
+}
+
+#clients td {
+  border-style: solid;
+  border-width: 0px 1px 1px 0px;
+}
+
+#clients {
+  border-collapse: collapse;
+}
+
+.dataTables_scrollBody {
+ overflow-x:hidden !important;
+ overflow-y:auto !important;
+}
+
+#report-cover {
+  position: absolute;
+  background-color: black;
+  width: 100%;
+  height: 102%;
+  left: 0%;
+  top: 0%;
+  z-index: 990;
+  opacity: 0.65;
+}
+
+#spinner {
+  position: absolute;
+  top: 150px;
+  left: 40%;
+  z-index: 991;
+}
+
+.dt-left {
+  text-align: left;
+  width: 90%;
+}
+
+.dt-right {
+  text-align: right;
+}
+
+.dt-center {
+  text-align: center;
+  width: 5%;
+}
+
+.warning {
+  background-color: red !important;
+  color: white !important;
+}
+
+</style>
+
+
+<script>
+var tt_cancel_destination = "/";
+
+function changeFinishButton() {
+  var b = document.getElementById('nextButton');
+  b.innerHTML = '<span>Finish</span>';
+  b.setAttribute('onmousedown','document.location="/";');
+}
+
+function back() {
+  document.location = '/apps/ART/views/reports/clinic/appointments.html';
+}
+
+function buildList() {
+  var f = document.getElementById('inputFrame' + tstCurrentPage);
+  f.style = 'width: 96%; height: 89%;';
+  var href = window.location.href;
+  var url = new URL(href);
+  var start_date = url.searchParams.get("start_date");
+  var end_date = url.searchParams.get("end_date");
+ 
+  let helpText = document.getElementById('helpText' + tstCurrentPage);
+  let innerHTML = `Screened for CxCa disaggregated by HIV status&nbsp;<span style="font-size: 16px;">(between the period of: <b>${moment(start_date).format("DD/MMM/YYYY")}</b>`;
+  innerHTML += `&nbsp;and&nbsp;<b>${moment(end_date).format("DD/MMM/YYYY")}</b>)</span>`;
+  helpText.innerHTML = innerHTML;
+  buildDataTable(f);
+
+  getList(start_date, end_date);
+}
+
+function buildDataTable(e) {
+  var table = document.createElement('table');
+  table.setAttribute('id','clients');
+  table.style = 'width: 100%;';
+  e.appendChild(table);
+
+  var theader = document.createElement('thead');
+  table.appendChild(theader);
+  var tr = document.createElement('tr');
+  theader.appendChild(tr);
+
+  var headers = ['&nbsp;','Age group', 'Number'];
+  
+  for(var i = 0 ; i < headers.length ; i++){
+    var th = document.createElement('th');
+    th.innerHTML = headers[i];
+    tr.appendChild(th);
+  }
+
+}
+
+function getList(sdate, edate) {
+  let url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1";
+  url += "/screened_for_cxca?date=" + sessionStorage.sessionDate;
+  url += `&program_id=${sessionStorage.programID}`;
+	url += `&report_name=SCREENED FOR CXCA DISAGGREGATED BY HIV STATUS`;
+  url += `&start_date=${sdate}&end_date=${edate}`; 
+
+  let xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+      var obj = JSON.parse(this.responseText);
+      document.getElementById("report-cover").style.display = "none";
+      document.getElementById("spinner").style.display = "none";
+      loadClients(obj);
+    }
+  };
+  xhttp.open("GET", url, true);
+  xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+  xhttp.setRequestHeader('Content-type', "application/json");
+  xhttp.send();
+}
+
+function calculatedGroup(hiv_staus){
+  if(hiv_staus.match(/Positive|Negative/)){
+    return hiv_staus;
+  }else{
+    return 'Unknown'
+  }
+}
+
+function loadClients(data) {
+  let formatted_data = [];
+  let age_groups = [
+    ['Positive on ART', 0],
+    ['Positive NOT on ART', 0],
+    ['Negative',0],
+    ['Unknown', 0]
+  ];
+
+  let count = 1;
+  for (let group_cont of age_groups){
+    for (const record of data) {
+      let hiv_status = record.hiv_status;
+      let patient_id = record.patient_id;
+      if(group_cont[0] == calculatedGroup(hiv_status))
+        group_cont[1] += 1;
+
+    } 
+    formatted_data.push([count++, group_cont[0], group_cont[1]]);
+  }
+  
+  jQuery('#clients').DataTable( {
+    fixedHeader:    true,
+    searching:      false,
+    data:           formatted_data,
+    deferRender:    true,
+    scrollY:        435,
+    scrollCollapse: false,
+    scroller:       false,
+    pageLength:     10000,
+    lengthChange:   false,
+    paging:         false,
+    order:          [[ 0, "asc" ]],
+    columnDefs: [
+      {"className": "dt-center", "targets": 0},
+      {"className": "dt-left", "targets": 1},
+      {"className": "dt-right", "targets": 2}
+    ],
+    dom: 'Bfrtip',
+    buttons: [
+      {
+        extend: "csv",
+        title: "Screened for CxCa disaggregated by HIV status ",
+        footer: true 
+      }
+    ]
+  } );
+
+}
+
+function addSelectButton(person_id) {
+  var span = document.createElement('span');
+  var button  = document.createElement('a');
+  button.setAttribute('onmousedown', 'selectClient(' + person_id + ')');
+  button.innerHTML = 'Select';
+  button.setAttribute('class','btn-primary');
+  button.setAttribute('href','#');
+  span.appendChild(button);
+  return span.innerHTML;
+}
+
+function selectClient(patient_id) {
+  document.location = '/views/confirm.html?person_id=' + patient_id;
+}
+
+function addClassIMGcontainter(person_id) {
+  var tr = document.getElementById('row-' + person_id);
+  var cells = tr.getElementsByTagName('td');
+
+  for(var i = 0 ; i < cells.length ; i++) {
+    if(i == 0) 
+      cells[i].setAttribute('class', 'npid');
+
+    if(i == 1) 
+      cells[i].setAttribute('class', 'given_name');
+
+    if(i == 2) 
+      cells[i].setAttribute('class', 'family_name');
+
+    if(i == 3) 
+      cells[i].setAttribute('class', 'gender');
+
+    if(i == 4) 
+      cells[i].setAttribute('class', 'birthdate');
+
+  }
+}
+
+</script>
+
+<body id="mateme">
+  <div id="container">
+    <div id="content">
+
+
+      <form>
+
+        <input type="text" name="summary"
+          tt_onLoad="__$('keyboard').style.display = 'none'; changeFinishButton(); buildList();" 
+          tt_pageStyleClass= "NoControls" helpText="Screened for CxCa" optional = "true"/>
+
+      </form>
+
+   </div>
+ </div>
+
+<div id="report-cover"></div>
+<img src="/assets/images/formloader.gif" id="spinner" />
+</body>

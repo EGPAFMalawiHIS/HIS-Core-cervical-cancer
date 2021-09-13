@@ -10,11 +10,11 @@
   display: none;
 }
 
-.#tt_page_via_test_month .inputFrameClass, .tt_controls_via_test_month .inputFrameClass{
+#tt_page_via_test_month .inputFrameClass, .tt_controls_via_test_month .inputFrameClass{
   height: 86%;
 }
 
-.#tt_page_via_test_month #viewport, .tt_controls_via_test_month #viewport {
+#tt_page_via_test_month .options, .tt_controls_via_test_month .options {
   height: 85%;
 }
 
@@ -36,4 +36,12 @@
   top: 0%;
   z-index: 990;
   opacity: 0.65;
+}
+
+#tt_page_hiv_test_month .inputFrameClass, .tt_controls_hiv_test_month .inputFrameClass{
+  height: 86%;
+}
+
+#tt_page_hiv_test_month .options, .tt_controls_hiv_test_month .options {
+  height: 85%;
 }
