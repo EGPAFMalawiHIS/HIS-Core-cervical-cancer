@@ -325,7 +325,10 @@ function conceptReason(reason){
     "Client NOT ready": 9998,
     "Treatment not available": 9999,
     "Other conditions": 2431,
-    "Unable to treat client": 10000
+    "Unable to treat client": 10000,
+    "Further Investigation and Management": 10031,
+    "Suspect cancer": 10032,
+    "Large Lesion (greater than 75 percent)": 10030
   };
   return reasons[reason];
 }

@@ -60,13 +60,30 @@ function getProgramStatus() {
 function getHIVOPDstatus() {
   
   let url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1";
-  url += `/programs/1/patients/` + sessionStorage.patientID;
+  url += `/observations?person_id=${sessionStorage.patientID}&concept_id=3753`;
   
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
     if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
-      var obj = JSON.parse(this.responseText);
-      document.getElementById('hiv-opd-status').innerHTML = obj.current_outcome;
+      let obj = JSON.parse(this.responseText);
+      let obs_datetime;
+      let obsservation;
+      for(const ob of obj){
+        if(obs_datetime == undefined){
+          obs_datetime = moment(ob.obs_datetime);
+          obsservation = ob;
+        }
+
+        if(obs_datetime < moment(ob.obs_datetime)) { 
+          obs_datetime = moment(ob.obs_datetime);
+          obsservation = ob;
+        }
+
+      }
+      
+      if(obsservation)
+        fetchConcept(obsservation.value_coded);
+
     
     }
   };
@@ -76,6 +93,25 @@ function getHIVOPDstatus() {
   xhttp.send();
 }
 
+function fetchConcept(concept_id){
+  let url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1";
+  url += `/concepts/${concept_id}`;
+  
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+      let obj = JSON.parse(this.responseText);
+      
+      if(obj)
+        document.getElementById('hiv-opd-status').innerHTML = obj.concept_names[0].name;
+
+    }
+  };
+  xhttp.open("GET", url, true);
+  xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+  xhttp.setRequestHeader('Content-type', "application/json");
+  xhttp.send();
+}
 
 setTimeout("getProgramStatus()", 1000);
 setTimeout("getHIVOPDstatus()", 1000);
