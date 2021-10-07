@@ -122,6 +122,7 @@ function submitParams(){
       let previous_cxca_date;
       let cxca_date_estimated = 0;
       let previous_screening_method = CxCaScreeningMethods[$('previous_screening_method').value];
+      let screening_method = CxCaScreeningMethods[screeningMethod()];
       let treatment_status = treatmentStatus[$('touchscreenInput' + tstCurrentPage).value];
       waiting_for_lab_tests = (waiting_for_lab_tests == 'No' ? 1066 : 1065);
 
@@ -138,8 +139,9 @@ function submitParams(){
         encounter_id: null,
         observations: [
             {concept_id: 9991, value_coded: 1065},
-            {concept_id: 9515, value_coded: 1065},
+            {concept_id: 9993, value_coded: 1065},
             {concept_id: 9992, value_coded: 1065},
+            {concept_id: 10038, value_coded: screening_method},
             {concept_id: 9994, value_coded: (cxca_date_estimated == 1 ? 7437 : null), value_datetime: previous_cxca_date}, 
             {concept_id: 10012, value_text: previous_cxca_location},
             {concept_id: 10039, value_coded: previous_screening_method},
@@ -173,7 +175,7 @@ function submitParams(){
         encounter_id: null,
         observations: [
             {concept_id: 9991, value_coded: 1065},
-            {concept_id: 9515, value_coded: 1065},
+            {concept_id: 9993, value_coded: 1065},
             {concept_id: 9992, value_coded: 1066},
             {concept_id: 9994, value_coded: (cxca_date_estimated == 1 ? 7437 : null), value_datetime: previous_cxca_date}, 
             {concept_id: 10012, value_text: previous_cxca_location},
@@ -187,13 +189,16 @@ function submitParams(){
       yesNo_Hash["Offer CxCa screening"]["Offer CxCa screening?"] == "Yes"){
 
         let screening_method = CxCaScreeningMethods[$('touchscreenInput' + tstCurrentPage).value];
+        waiting_for_lab_tests = (waiting_for_lab_tests == 'No' ? 1066 : 1065);
+
         observations = {
           encounter_id: null,
           observations: [
               {concept_id: 9991, value_coded: 1065},
-              {concept_id: 9515, value_coded: 1066},
+              {concept_id: 9993, value_coded: 1066},
               {concept_id: 9992, value_coded: 1065},
-              {concept_id: 10038, value_coded: screening_method}
+              {concept_id: 10038, value_coded: screening_method},
+              {concept_id: 2224, value_coded: waiting_for_lab_tests}
           ]
         };
 
@@ -206,7 +211,7 @@ function submitParams(){
           encounter_id: null,
           observations: [
               {concept_id: 9991, value_coded: 1065},
-              {concept_id: 9515, value_coded: 1066},
+              {concept_id: 9993, value_coded: 1066},
               {concept_id: 9992, value_coded: 1066},
               {concept_id: 10008, value_coded: reason_for_no_cxca}
           ]
