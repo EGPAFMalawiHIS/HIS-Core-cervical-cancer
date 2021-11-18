@@ -153,14 +153,14 @@ function fetchBookedCxCaClients() {
 var data_table;
 var right_data_table;
 
-function initializeTable(name, columns) {
+function initializeTable(name, columns, scrollY) {
 
   let table = $(`#${name}`).DataTable({
     fixedHeader: true,
     searching: false,
     paging: false,
     info: false,
-    scrollY: 310,
+    scrollY: scrollY,
     scroller: {
         loadingIndicator: true
     },
@@ -172,12 +172,12 @@ function initializeTable(name, columns) {
 
 initializeTable('lab-stats-table',
   [{"className": "screening-names", "targets": 0}, 
-  {"className": "counts", "targets": 1}]
+  {"className": "counts", "targets": 1}], 310
 );
 initializeTable('book-clients-table',
   [{"className": "screening-names", "targets": 0}, 
   {"className": "counts", "targets": 1},
-  {"className": "counts", "targets": 2}]
+  {"className": "counts", "targets": 2}], 275
 );
 
 
