@@ -17,6 +17,7 @@
 
 #lab-stats-table {
   width: 96%;
+  display: table;
 }
 
 .stat-boxes th {
@@ -37,20 +38,57 @@
   border-width: 0px 0px 1px 0px;
 }
 
+#lab-stats-row {
+  display: table-row;
+}
+
+.lab-stats-cell {
+  display: table-cell;
+}
+
+#left-cell {
+  width:45%;
+  padding-right: 25px;
+}
+
+#right-cell {
+  width:45%;
+  border-left-width: 4px;
+  border-left-style: solid;
+  padding-left: 25px;
+}
+
 </style>
 
 <div id='lab-stats'>
+  <div id='lab-stats-row'>
 
-<table id='lab-stats-table'>
-  <thead>
-    <tr class='stat-boxes'>
-      <th>Screening method</th>
-      <th>Count</th>
-    </tr>
-  </thead>
-</table>
+    <div class='lab-stats-cell' id="left-cell">
+      <table id='lab-stats-table'>
+        <thead>
+          <tr class='stat-boxes'>
+            <th>Today's screening method</th>
+            <th>Count</th>
+          </tr>
+        </thead>
+      </table>
+    </div>
+
+    <div class='lab-stats-cell' id="right-cell">
+      <h7>Clients booked from HIV/ART program</h7>
+      <table id='book-clients-table'>
+        <thead>
+          <tr class='stat-boxes'>
+            <th>Age group</th>
+            <th>Booked</th>
+            <th>Screened</th>
+          </tr>
+        </thead>
+      </table>
+    </div>
 
 
+  </div>
 </div>
 
 <script>
@@ -58,6 +96,19 @@
 function dashboardStats(stats) {
   for(const name in stats){
     data_table.row.add([name, stats[name]]).draw();
+  }
+}
+
+function loadBookedClients(data){
+  for(const age_group in data){
+    const people = data[age_group];
+    let screened = 0;
+    for(const person of people){
+      if(person['screening_method_present'] == true)
+        screened++;
+
+    }
+    right_data_table.row.add([age_group, people.length, screened]).draw();
   }
 }
 
@@ -79,27 +130,58 @@ function fetchDashboardStats() {
   xhttp.send();
 }
 
-var data_table;
+function fetchBookedCxCaClients() {
+  let url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1";
+  url += "/screened_for_cxca?date=" + sessionStorage.sessionDate;
+  url += `&program_id=${sessionStorage.programID}`;
+	url += `&report_name=BOOKED CLIENTS FROM ART`;
+  url += `&start_date=${sessionStorage.sessionDate}&end_date=${sessionStorage.sessionDate}`; 
 
-function initializeTable() {
-  data_table = $('#lab-stats-table').DataTable({
-      fixedHeader: true,
-      searching: false,
-      paging: false,
-      info: false,
-      scrollY: 310,
-      scroller: {
-          loadingIndicator: true
-      },
-      columnDefs: [
-        {"className": "screening-names", "targets": 0},
-        {"className": "counts", "targets": 1}
-      ],
-      order: [[0, 'asc']]
-  });
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+      var obj = JSON.parse(this.responseText);
+      loadBookedClients(obj);
+    }
+  };
+  xhttp.open("GET", url, true);
+  xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+  xhttp.setRequestHeader('Content-type', "application/json");
+  xhttp.send();
 }
 
+var data_table;
+var right_data_table;
+
+function initializeTable(name, columns) {
+
+  let table = $(`#${name}`).DataTable({
+    fixedHeader: true,
+    searching: false,
+    paging: false,
+    info: false,
+    scrollY: 310,
+    scroller: {
+        loadingIndicator: true
+    },
+    columnDefs: columns,
+    order: [[0, 'asc']]
+  });
+  name == 'lab-stats-table' ? data_table = table : right_data_table = table;
+}
+
+initializeTable('lab-stats-table',
+  [{"className": "screening-names", "targets": 0}, 
+  {"className": "counts", "targets": 1}]
+);
+initializeTable('book-clients-table',
+  [{"className": "screening-names", "targets": 0}, 
+  {"className": "counts", "targets": 1},
+  {"className": "counts", "targets": 2}]
+);
+
+
 setTimeout("fetchDashboardStats()", 200);
-initializeTable();
+setTimeout("fetchBookedCxCaClients()", 200);
 </script>
 

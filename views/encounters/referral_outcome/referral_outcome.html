@@ -1,0 +1,56 @@
+<script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js"
+defer="true"></script>
+<!-- <script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/standard.js" defer="true"></script> -->
+<script type="text/javascript" src="/assets/js/jquery.min.js"></script>
+
+<!--script type="text/javascript" src="/assets/js/yes_no_ctrls.js"></script>
+<link rel="stylesheet" href="/assets/css/yes_no_ctrls.css" type="text/css"-->
+<script type="text/javascript" src="/assets/js/post_parameters.js"></script>
+<script type="text/javascript" src="/assets/js/generic_ajaxrequest.js"></script>
+<script type="text/javascript" src="/assets/js/moment.js"></script>
+<script type="text/javascript" src="/assets/js/alertifyjs/alertify.js"></script>
+<!--script type="text/javascript" src="/assets/js/does_connection_exist.js"></script-->
+<link rel="stylesheet" href="/assets/css/provider.css" type="text/css">
+<script type="text/javascript" src="/assets/js/provider.js  "></script>
+
+<link rel="stylesheet" href="/assets/css/alertifyjs/css/alertify.css" type="text/css">
+
+
+<link rel="stylesheet" href="referral_outcome.css" type="text/css">
+<script type="text/javascript" src="referral_outcome.js"></script>
+
+
+
+<body id="mateme">
+  <div id="container">
+      <div id="content">
+  
+          <form>
+        
+              <select allowFreeText="false" helpText="Referral outcome" 
+                id="select_referral_outcome" name="select_referral_outcome" 
+                tt_onLoad="setupOutcomes();" key="select_referral_outcome">
+                <option value=""></option>
+                <option value="Cancer of cervix">Cancer of cervix</option>
+                <option value="Continue follow-up">Continue follow-up</option>
+                <option value="Discharged uninfected">Discharged uninfected</option>
+                <option value="Treatment complete">Treatment complete</option>
+                <!--option value="Surgery">Surgery</option>
+                <option value="Palliative Care">Palliative Care</option-->
+              </select>
+
+							<select allowFreeText="false" helpText="Select cancer treatment" 
+                id="select_cancer_treatment" name="select_cancer_treatment" 
+                tt_onLoad="setupFinishBTN();" key="select_cancer_treatment">
+                <option value=""></option>
+                <option value="Surgery">Surgery</option>
+                <option value="Palliative Care">Palliative Care</option>
+                <option value="Discharged">Discharged</option>
+                <option value="Other">Other</option>
+              </select>
+
+						</form>
+
+		</div>
+	</div>
+</body>

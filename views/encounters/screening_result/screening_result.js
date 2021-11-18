@@ -139,20 +139,6 @@ function nextPage(obs){
   nextEncounter(sessionStorage.patientID, sessionStorage.programID);
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 function fetchScreeningMthod(concept_id){
   let url = sessionStorage.apiProtocol+ '://' + apiURL + ':' + apiPort + '/api/v1/concepts/' + concept_id;
 

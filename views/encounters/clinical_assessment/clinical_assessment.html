@@ -208,9 +208,9 @@ defer="true"></script>
                      tt_onLoad="__$('keyboard').style.display = 'none';addOfferCxCaYesNo();"
                      tt_pageStyleClass="NoControls" 
                      condition="art_offer_cxca_data == false"
-                     helpText="Offer CxCa screening" optional="true"/>
+                     helpText="Offer CxCa screening today" optional="true"/>
                     
-               <select allowFreeText="false" helpText="Screening Method" 
+               <select allowFreeText="false" helpText="Screening method being offered today" 
                  id="screening_method" name="screening_method" 
                  condition="offerCxCaScreening() == true;"
                  tt_onLoad="addScreeningOptions();" key="screening_method">
@@ -234,7 +234,7 @@ defer="true"></script>
               </select>
 
 
-              <select allowFreeText="false" helpText="Reason for denying CxCa screening" 
+              <select allowFreeText="false" helpText="Reason for <b>NOT</b> offering CxCa screening" 
                   id="reason_for_no_cxca" name="reason_for_no_cxca" 
                   condition="offerCxCaScreening() == false"
                   tt_onLoad="setReasonForNoVIA();" key="reason_for_no_cxca">

@@ -395,7 +395,7 @@ function postObs(encounter){
 function changeState(){
   let outcome = {
     location_id: locations[sessionStorage.currentLocation],
-    state: 185,
+    state: 177,
     date: sessionStorage.sessionDate
   }
   let state = JSON.stringify(outcome);
@@ -708,6 +708,10 @@ function enterHIVtestDate(){
 
 ARTofferCxCa();
 HIVststus();
+
+
+
+
 
 
 

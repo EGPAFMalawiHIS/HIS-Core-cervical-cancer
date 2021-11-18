@@ -15,6 +15,11 @@
       "activitiesIcon": "../assets/images/cancer.png",
       "url": "/apps/CxCa/views/encounters/cancer_treatment/treatment.html"
     },
+    "cxca referral feedback": {
+      "available": true,
+      "activitiesIcon": "../assets/images/referral.png",
+      "url": "/apps/CxCa/views/encounters/referral_outcome/referral_outcome.html"
+    },
    "appointment": {
       "available": true,
       "activitiesIcon": "../assets/images/appointment.png",
