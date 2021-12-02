@@ -96,7 +96,7 @@ function submitEnc(){
 function  updateOutcome(){
   let outcome = {
     location_id: locations[sessionStorage.currentLocation],
-    state: fetched_states['Continue follow-up'],
+    state: fetched_states['Pre CxCa treatment'],
     date: sessionStorage.sessionDate
   }
   let state = JSON.stringify(outcome);
