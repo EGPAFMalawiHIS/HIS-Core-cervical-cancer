@@ -340,10 +340,10 @@ function submitParams(){
     observations.observations.push({concept_id: 3753, value_coded: hiv_statuses[hiv_status]});
     if(hiv_test_date_estimated){
       observations.observations.push({concept_id: 1837, 
-        value_coded: hiv_test_date, 
+        value_datetime: hiv_test_date, 
         value_text: `Date estimated: ${$('hiv_test_date_estimation').value}`});
     }else{
-      observations.observations.push({concept_id: 1837, value_coded: hiv_test_date});
+      observations.observations.push({concept_id: 1837, value_datetime: hiv_test_date});
     }
   }else{
     hiv_status = 10018;
