@@ -52,10 +52,19 @@ defer="true"></script>
       <div id="content">
   
           <form>
-         
+        
+            <select allowFreeText="false" helpText="Screening result available" 
+               id="screening_result_available" name="screening_result_available" 
+               tt_onLoad="__$('keyboard').style.display = 'none';addExtras();checkIfInBDMode();" 
+               key="screening_result_available">
+               <option value=""></option>
+               <option value="Yes">Yes</option>
+               <option value="No">No</option>
+            </select>
+
               <select allowFreeText="false" helpText="Screening Result" 
                  id="screening_result" name="screening_result" 
-                 tt_onLoad="__$('keyboard').style.display = 'none';resetTreatmentOptions();checkIfInBDMode();" 
+                 tt_onLoad="__$('keyboard').style.display = 'none';resetTreatmentOptions();" 
                  key="screening_result">
                  <option value=""></option>
               </select>

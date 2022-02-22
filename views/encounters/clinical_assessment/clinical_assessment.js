@@ -111,7 +111,6 @@ function calculateEstimatedDate(period){
 }
 
 function submitParams(){
-  let waiting_for_lab_tests = __$('waiting_for_lab_tests').value;
 
   if(yesNo_Hash["CxCa screening"]["Ever had CxCa screening?"] ==  'Yes' && 
     yesNo_Hash["CxCa results available"]["Results available?"] == "Yes" && 
@@ -124,7 +123,6 @@ function submitParams(){
       let previous_screening_method = CxCaScreeningMethods[$('previous_screening_method').value];
       let screening_method = CxCaScreeningMethods[screeningMethod()];
       let treatment_status = treatmentStatus[$('touchscreenInput' + tstCurrentPage).value];
-      waiting_for_lab_tests = (waiting_for_lab_tests == 'No' ? 1066 : 1065);
 
       if(previous_cxca_year.toLowerCase() == 'unknown'){
         previous_cxca_date = calculateEstimatedDate($('previous_cxca_date_estimation').value);
@@ -145,8 +143,7 @@ function submitParams(){
             {concept_id: 9994, value_coded: (cxca_date_estimated == 1 ? 7437 : null), value_datetime: previous_cxca_date}, 
             {concept_id: 10012, value_text: previous_cxca_location},
             {concept_id: 10039, value_coded: previous_screening_method},
-            {concept_id: 10009, value_coded: treatment_status},
-            {concept_id: 2224, value_coded: waiting_for_lab_tests}
+            {concept_id: 10009, value_coded: treatment_status}
         ]
       };
 
@@ -189,7 +186,6 @@ function submitParams(){
       yesNo_Hash["Offer CxCa screening"]["Offer CxCa screening?"] == "Yes"){
 
         let screening_method = CxCaScreeningMethods[$('touchscreenInput' + tstCurrentPage).value];
-        waiting_for_lab_tests = (waiting_for_lab_tests == 'No' ? 1066 : 1065);
 
         observations = {
           encounter_id: null,
@@ -197,8 +193,7 @@ function submitParams(){
               {concept_id: 9991, value_coded: 1065},
               {concept_id: 9993, value_coded: 1066},
               {concept_id: 9992, value_coded: 1065},
-              {concept_id: 10038, value_coded: screening_method},
-              {concept_id: 2224, value_coded: waiting_for_lab_tests}
+              {concept_id: 10038, value_coded: screening_method}
           ]
         };
 
@@ -234,7 +229,6 @@ function submitParams(){
       yesNo_Hash["Offer CxCa screening"]["Offer CxCa screening?"] == "Yes"){
         let screening_method = CxCaScreeningMethods[$('screening_method').value];
         let treatment_status = treatmentStatus[$('touchscreenInput' + tstCurrentPage).value];
-        waiting_for_lab_tests = (waiting_for_lab_tests == 'No' ? 1066 : 1065);
 
         observations = {
           encounter_id: null,
@@ -242,22 +236,19 @@ function submitParams(){
               {concept_id: 9991, value_coded: 1066},
               {concept_id: 9992, value_coded: 1065},
               {concept_id: 10038, value_coded: screening_method},
-              {concept_id: 10009, value_coded: treatment_status},
-              {concept_id: 2224, value_coded: waiting_for_lab_tests}
+              {concept_id: 10009, value_coded: treatment_status}
           ]
         };
 
 
   }else if(yesNo_Hash["Offer CxCa screening"]["Offer CxCa screening?"] == "Yes"){
     let screening_method = CxCaScreeningMethods[$('touchscreenInput' + tstCurrentPage).value];
-    waiting_for_lab_tests = (waiting_for_lab_tests == 'No' ? 1066 : 1065);
 
     observations = {
       encounter_id: null,
       observations: [
           {concept_id: 9991, value_coded: 1065},
-          {concept_id: 10038, value_coded: screening_method},
-          {concept_id: 2224, value_coded: waiting_for_lab_tests}
+          {concept_id: 10038, value_coded: screening_method}
       ]
     };
 
@@ -279,7 +270,6 @@ function submitParams(){
 
       let treatment_status = treatmentStatus[$('touchscreenInput' + tstCurrentPage).value];
       let screening_method = CxCaScreeningMethods[$('screening_method').value];
-      waiting_for_lab_tests = (waiting_for_lab_tests == 'No' ? 1066 : 1065);
 
       observations = {
         encounter_id: null,
@@ -287,8 +277,7 @@ function submitParams(){
             {concept_id: 9991, value_coded: 1066},
             {concept_id: 9992, value_coded: 1065},
             {concept_id: 10009, value_coded: treatment_status},
-            {concept_id: 10038, value_coded: screening_method},
-            {concept_id: 2224, value_coded: waiting_for_lab_tests}
+            {concept_id: 10038, value_coded: screening_method}
         ]
       };
 
@@ -609,27 +598,29 @@ function offerCxCaScreening(){
 }
 
 function addScreeningOptions() {
-  let lists = __$('tt_currentUnorderedListOptions').getElementsByTagName('li');
-  for(let i = 0 ; i < lists.length; i++){
-    let opt = lists[i].getAttribute("onclick") + "changeNextOption(this);";
-    lists[i].setAttribute("onclick", opt);
+  if(offerCxCaScreening() == true){
+   let nextBTN = $('nextButton');
+   nextBTN.innerHTML = "<span>Finish</span>";
+   nextBTN.setAttribute("onmousedown", "validateScreeningMethod();") 
   }
 }
 
-function changeNextOption(e){
-  let nextBTN = __$('nextButton');
+function validateScreeningMethod(){
+  const method = $('touchscreenInput' + tstCurrentPage).value;
+  const options = $('options').getElementsByTagName('li');
+  let valid_method = false;
 
-  if(e.innerHTML.match(/VIA/i) || e.innerHTML.match(/Exam/i)){
-    nextBTN.setAttribute("onmousedown", "sameDayScreening();")
-    nextBTN.innerHTML = "<span>Finish</span>";
-  }else{
-    nextBTN.setAttribute("onmousedown", "gotoNextPage();")
-    nextBTN.innerHTML = "<span>Next</span>";
+  for(const li of options){
+    if(li.textContent == method)
+      valid_method = true;
+
   }
-}
 
-function sameDayScreening(){
-  __$('waiting_for_lab_tests').value = 'No';
+  if(!valid_method){
+    showMessage("Please select a valid method");
+    return;
+  }
+
   submitParams();
 }
 

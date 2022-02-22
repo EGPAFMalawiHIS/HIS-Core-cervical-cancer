@@ -149,7 +149,9 @@ function fetchScreeningMthod(concept_id){
               let concept = JSON.parse(this.responseText);
               if(concept){
                 global_screening_method = concept.concept_names[0].name;
-                setTimeout(function(){ loadTreatmentOptions(global_screening_method); }, 1000);
+                //setTimeout(function(){ loadTreatmentOptions(global_screening_method); }, 1000);
+                $('spinner').style = 'display: none;';
+                $('cover').style = 'display: none;';
               }
           }
       }
@@ -193,6 +195,9 @@ var global_screening_method;
 function resetTreatmentOptions(){
   if(global_screening_method){
     let options = __$('tt_currentUnorderedListOptions').getElementsByTagName('li');
+    if(options.length < 1)
+      loadTreatmentOptions(global_screening_method);
+    
 
     for(let i = 0; i < options.length; i++){
       let onlickOptions = "null; updateTouchscreenInputForSelect(this);";
@@ -296,7 +301,8 @@ function postNegativeResults(encounter){
   let obs = {
     encounter_id: encounter.encounter_id,
     observations: [
-      {concept_id: 10040, value_coded: screening_result_concept}
+      {concept_id: 10040, value_coded: screening_result_concept},
+      {concept_id: 10562, value_coded: 1065}
     ]
   };
 
@@ -375,7 +381,8 @@ function postPositiveResults(encounter){
     encounter_id: encounter.encounter_id,
     observations: [
       {concept_id: 10040, value_coded: screening_result_concept},
-      {concept_id: 3567, value_coded: treatment_option}
+      {concept_id: 3567, value_coded: treatment_option},
+      {concept_id: 10562, value_coded: 1065}
     ]
   };
 
@@ -421,6 +428,40 @@ function addHPVVIAdata(ob){
   }
 }
 
+function addExtras() {
+  let opts  = $('tt_currentUnorderedListOptions').getElementsByTagName('li');
+  for(let i = 0; i < opts.length; i++){
+    opts[i].setAttribute("onclick",  "null; updateTouchscreenInputForSelect(this);checkResultAvailability(this);")
+  }
+}
+
+function checkResultAvailability(e){
+  let select_option = e.getAttribute('tstvalue');
+  let nextBTN = $('nextButton');
+
+  if(select_option ==  "No"){
+    nextBTN.setAttribute("onmousedown", "noResultAvailable();");
+    nextBTN.innerHTML = "<span>Finish</span>";
+  }else{
+    nextBTN.setAttribute("onmousedown", "gotoNextPage();");
+    nextBTN.innerHTML = "<span>Next</span>";
+  }
+}
+
+function noResultAvailable(){
+  const encounter = encounterOBJ();
+  submitParameters(encounter, "/encounters", "postNoResults");
+}
+
+function postNoResults(encounter){
+  const obs = {
+    encounter_id: encounter.encounter_id,
+    observations: [
+      {concept_id: 10562, value_coded: 1066}
+    ]
+  }; 
+  submitParameters(obs, "/observations", "nextPage");
+}
 
 
 fetchTreatmentOptions();

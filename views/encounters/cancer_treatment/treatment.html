@@ -30,30 +30,88 @@ defer="true"></script>
       <div id="content">
   
           <form>
-        
-              <select allowFreeText="false" helpText="Treatment Performed" 
-                id="select_referral_outcome" name="select_referral_outcome" 
-                tt_onLoad="addAttributes();checkIfInBDMode();" key="select_referral_outcome">
+
+            <select allowFreeText="false" helpText="FIGO staging results" 
+                id="figo_staging_results" name="figo_staging_results" 
+                tt_onLoad="checkIfInBDMode();" key="figo_staging_results">
                 <option value=""></option>
-                <option value="Cryotherapy">Cryotherapy</option>
-                <option value="Leep">Leep</option>
-                <option value="Thermocoagulation">Thermocoagulation</option>
-                <!--option value="Surgery">Surgery</option>
-                <option value="Palliative care">Palliative care</option-->
-                <option value="Other">Other</option>
+                <option value="Cervical stage 1">Cervical stage 1</option>
+                <option value="Cervical stage 2">Cervical stage 2</option>
+                <option value="Cervical stage 3">Cervical stage 3</option>
+                <option value="Cervical stage 3">Cervical stage 4</option>
+                <option value="Not available">Not available</option>
+              </select>
+
+              <select allowFreeText="false" helpText="Type of sample collected" 
+                id="type_of_sample_collected" name="type_of_sample_collected" 
+                tt_onLoad="addExtras();" key="type_of_sample_collected">
+                <option value=""></option>
+                <option value="Punch Biopsy">Punch Biopsy</option>
+                <option value="LLETZ sample">LLETZ sample</option>
+                <option value="Not available">Not available</option>
+              </select>
+
+              <select allowFreeText="false" helpText="Histology results" 
+                id="histology_results" name="histology_results" 
+                condition="$('type_of_sample_collected').value != 'Not available'"
+                tt_onLoad="" key="histology_results">
+                <option value=""></option>
+                <option value="Normal">Normal</option>
+                <option value="CIN 1">CIN 1</option>
+                <option value="CIN 2">CIN 2</option>
+                <option value="CIN 3">CIN 3</option>
+                <option value="Carcinoma in Situ">Carcinoma in Situ</option>
+                <option value="Invasive cancer of cervix">Invasive cancer of cervix</option>
+                <option value="Benign cervical warts">Benign cervical warts</option>
+                <option value="Not available">Not available</option>
+              </select>
+
+              <select allowFreeText="false" helpText="Complications during LLETZ" 
+                condition="$('type_of_sample_collected').value == 'LLETZ sample'"  
+                id="complications_during_lletz" name="complications_during_lletz" 
+                tt_onLoad="" key="complications_during_lletz">
+                <option value=""></option>
+                <option value="Bleeding">Bleeding</option>
+                <option value="Pain">Pain</option>
+                <option value="None">None</option>
               </select>
 
 
-              <!--select allowFreeText="false" helpText="Select Cancer treatment" 
-                 id="select_cancer_treatment" name="select_cancer_treatment" 
-                 condition="selectedCancerConfirmed() == true"
-                 tt_onLoad="createEndFunction();" key="select_cancer_treatment">
-                 <option value=""></option>
-                 <option value="Surgery">Surgery</option>
-                 <option value="Chemotherapy">Chemotherapy</option>
-                 <option value="Palliative care">Palliative care</option>
-                 <option value="Other">Other</option>
-              </select-->
+              <select allowFreeText="false" helpText="Treatment Performed" 
+                id="select_referral_outcome" name="select_referral_outcome" 
+                tt_onLoad="" key="select_referral_outcome">
+                <option value=""></option>
+                <option value="Hysterectomy">Hysterectomy</option>
+                <option value="Cryotherapy">Cryotherapy</option>
+                <option value="Leep">Leep</option>
+                <option value="Palliative Care">Palliative Care</option>
+                <option value="LLETZ">LLETZ</option>
+                <option value="Conisation">Conisation</option>
+                <option value="Thermocoagulation">Thermocoagulation</option>
+                <option value="Chronic cervicitis">Chronic cervicitis</option>
+                <option value="Patient refused">Patient refused</option>
+              </select>
+
+              <select allowFreeText="false" helpText="Recommended Plan of care for LLETZ" 
+                id="recommended_plan_of_care_for_lletz" name="recommended_plan_of_care_for_lletz" 
+                condition="$('select_referral_outcome').value == 'LLETZ'"  
+                tt_onLoad="" key="recommended_plan_of_care_for_lletz">
+                <option value=""></option>
+                <option value="Hysyerectomy">Hysyerectomy</option>
+                <option value="Trachelectomy">Trachelectomy</option>
+                <option value="Discharged">Discharged</option>
+                <option value="Continue follow-up">Continue follow-up</option>
+              </select>
+
+              <select allowFreeText="false" helpText="Patient outcome" 
+                id="patient_outcome" name="patient_outcome" 
+                tt_onLoad="addEndFunction();" key="patient_outcome">
+                <option value=""></option>
+                <option value="Palliative Care">Palliative Care</option>
+                <option value="No Dysplasia/Cancer">No Dysplasia/Cancer</option>
+                <option value="Patient died">Patient died</option>
+              </select>
+
 
               
 

@@ -222,18 +222,6 @@ defer="true"></script>
               </select>
 
               
-               <select allowFreeText="false" helpText="Waiting for lab tests" 
-                 id="waiting_for_lab_tests" name="waiting_for_lab_tests" 
-                 condition="offerCxCaScreening() == true"
-                 tt_onLoad="endNextBTN();" key="waiting_for_lab_tests">
-                 <option value=""></option>
-                 <option value="Yes">Yes</option>
-                 <option value="No">No</option>
-                 <!--<option value="Postponed Treatment Performed">Postponed Treatment Performed</option>-->
-                 <!--option value="Referral">Referral</option-->
-              </select>
-
-
               <select allowFreeText="false" helpText="Reason for <b>NOT</b> offering CxCa screening" 
                   id="reason_for_no_cxca" name="reason_for_no_cxca" 
                   condition="offerCxCaScreening() == false"

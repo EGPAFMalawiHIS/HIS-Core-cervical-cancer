@@ -31,37 +31,49 @@ function fetchPreviousVIAoutcome(){
   }
 }
 
-function addAttributes(){
-  let nextBTN = $('nextButton');
-  nextBTN.innerHTML = "<span>Finish</span>";
-  nextBTN.setAttribute("onmousedown","submitEnc();");
-  addExtras();
-}
-
 function addExtras(){
   let opts  = $('tt_currentUnorderedListOptions').getElementsByTagName('li');
   for(let i = 0; i < opts.length; i++){
     opts[i].setAttribute("onclick",  "null; updateTouchscreenInputForSelect(this);changeNextBTN(this);")
   }
-  $('page-load-cover').style = "display: none;";
 }
 
 function changeNextBTN(e){
   let select_outcome = e.getAttribute('tstvalue');
   let nextBTN = $('nextButton');
-  if(select_outcome  == 'Cancer confirmed'){
+  const figo_staging_results =  $('figo_staging_results').value;
+
+  if(select_outcome  == 'Not available' && figo_staging_results == 'Not available'){
+    nextBTN.innerHTML = "<span>Finish</span>";
+    nextBTN.setAttribute("onmousedown","updateOutcome('Continue follow-up');");
+  }else{
     nextBTN.innerHTML = "<span>Next</span>";
     nextBTN.setAttribute("onmousedown","gotoNextPage();");
-  }else{
-    nextBTN.innerHTML = "<span>Finish</span>";
-    nextBTN.setAttribute("onmousedown","submitEnc();");
   }
 }
 
-function createEndFunction(){
+function addEndFunction(){
   let nextBTN = $('nextButton');
-  nextBTN.innerHTML = "<span>Finish</span>";
-  nextBTN.setAttribute("onmousedown","submitEnc();");
+  nextBTN.setAttribute("onmousedown","validateEntry();");
+}
+
+function validateEntry(){
+  const outcome = $('touchscreenInput' + tstCurrentPage).value;
+  const options = $('options').getElementsByTagName('li');
+  let valid_outcome = false;
+
+  for(const li of options){
+    if(li.textContent == outcome)
+      valid_outcome = true;
+
+  }
+
+  if(!valid_outcome){
+    showMessage("Please select a valid outcome");
+    return;
+  }
+
+  createEncounter();
 }
 
 var observations;
@@ -75,28 +87,10 @@ var cancer_treatment_procedures = {
   'Other': 6408
 }
 
-function submitEnc(){
-  final_selected_outcome = __$('select_referral_outcome').value;
-
-  if(final_selected_outcome.length < 1){
-    showMessage("Please select outcome");
-    return;
-  }
-
-  if(final_selected_outcome == 'Cancer confirmed'){
-    if($('select_cancer_treatment').value == ''){
-      showMessage("Please select cancer treatment");
-      return;
-    }
-  }
-
-  updateOutcome();
-}
-
-function  updateOutcome(){
+function updateOutcome(concept_name){
   let outcome = {
     location_id: locations[sessionStorage.currentLocation],
-    state: fetched_states['Continue follow-up'],
+    state: fetched_states[concept_name],
     date: sessionStorage.sessionDate
   }
   let state = JSON.stringify(outcome);
@@ -110,7 +104,11 @@ function  updateOutcome(){
       if (this.readyState == 4) {
           if (this.status == 201) {
             let obs = JSON.parse(this.responseText);
-            createEncounter();  
+            if(concept_name == 'Continue follow-up'){
+              createEncounter();  
+            }else{
+              uploadObservations();
+            }
           }
       }
   };
@@ -139,34 +137,65 @@ function createEncounter(){
   submitParameters(encounter, "/encounters", "postObs");
 }
 
+var observations;
+
 function postObs(encounter){
-  let procedure_name = document.getElementById("touchscreenInput" + tstCurrentPage).value
+  let figo_staging_results = $('figo_staging_results').value;
+  let type_of_sample_collected = $('type_of_sample_collected').value;
 
-  let observations = {
-    encounter_id: encounter.encounter_id,
-    observations: [
-      {concept_id: 10015, value_coded: cancer_treatment_procedures[procedure_name]}
-    ]
-  };
-  /*let observations = {
-    encounter_id: encounter.encounter_id,
-    observations: [
-      {concept_id: 6538, value_coded: outcome_concepts[final_selected_outcome]}
-    ]
-  };
+  if(figo_staging_results == 'Not available' && type_of_sample_collected == 'Not available'){
+    observations = {
+      encounter_id: encounter.encounter_id,
+      observations: [
+        {concept_id: 10545, value_coded: 1107},
+        {concept_id: 6680, value_coded: 1107}
+      ]
+    };
+    uploadObservations();
+  }else{
+    observations = {
+      encounter_id: encounter.encounter_id,
+      observations: []
+    };
 
-  if(final_selected_outcome == 'Cancer confirmed'){
-    observations.observations.push({
-      concept_id: 10015, 
-      value_coded: cancer_treatment_procedures[$('select_cancer_treatment').value]
-    })
-  }*/
+    let histology_results = $('histology_results').value;
+    let complications_during_lletz = $('complications_during_lletz').value;
+    let select_referral_outcome = $('select_referral_outcome').value;
+    let recommended_plan_of_care_for_lletz = $('recommended_plan_of_care_for_lletz').value;
+    let patient_outcome = $('touchscreenInput' + tstCurrentPage).value;
 
+    if(type_of_sample_collected != 'Not available'){
+      observations.observations.push({concept_id: 6680, value_coded: getConceptCode(type_of_sample_collected)});
+    }
+
+    if(figo_staging_results != 'Not available'){
+      observations.observations.push({concept_id: 10545, value_coded: getConceptCode(figo_staging_results)});
+    }
+
+    if(type_of_sample_collected != 'Not available'){
+      observations.observations.push({concept_id: 10548, value_coded: getConceptCode(histology_results)});
+    }
+
+    if(type_of_sample_collected == 'LLETZ sample'){
+      observations. observations.push({concept_id: 6406, value_coded: getConceptCode(complications_during_lletz)});
+    }
+
+    observations.observations.push({concept_id: 1185, value_coded: getConceptCode(select_referral_outcome)});
+
+    if(select_referral_outcome == 'LLETZ'){
+      observations.observations.push({concept_id: 10561, value_coded: getConceptCode(recommended_plan_of_care_for_lletz)});
+    }
+
+    updateOutcome(patient_outcome);
+  }
+}
+
+
+function uploadObservations(){
   submitParameters(observations, "/observations", "nextPage"); 
 }
 
 function nextPage(obs){
-  //window.location.href = "/views/patient_dashboard.html?patient_id=" + sessionStorage.patientID;
   nextEncounter(sessionStorage.patientID, sessionStorage.programID);
 }
 
@@ -241,3 +270,44 @@ function fetchStates(){
 
 fetchLocations();
 fetchStates();
+
+
+
+
+function getConceptCode(name) {
+  concept_names = {
+    'Punch Biopsy': 10546,
+    'LLETZ sample': 10547,
+    'Normal': 1115,
+    'CIN 1': 10551,
+    'CIN 2': 10552,
+    'CIN 3': 10553,
+    'Carcinoma in Situ': 10554,
+    'Invasive cancer of cervix': 2588,
+    'Benign cervical warts': 10550,
+    'Not available': 1107,
+    'Bleeding': 7918,
+    'Pain': 9593,
+    'None': 1107,
+    'Hysterectomy': 5276,
+    'Cryotherapy': 10521,
+    'Leep': 10002,
+    'Palliative Care': 9053,
+    'LLETZ': 10560,
+    'Conisation': 10557,
+    'Thermocoagulation': 9996,
+    'Chronic cervicitis': 10549,
+    'Patient refused': 3580,
+    'Hysyerectomy': 10556,
+    'Trachelectomy': 10558,
+    'Discharged': 3626,
+    'Continue follow-up': 8882,
+    'No Dysplasia/Cancer': 10559,
+    'Patient died': 1742,
+    'Cervical stage 1': 8739,
+    'Cervical stage 2': 8787,
+    'Cervical stage 3': 8788,
+    'Cervical stage 4': 8740 
+  };
+  return concept_names[name]
+}
