@@ -430,6 +430,8 @@ function addHPVVIAdata(ob){
 
 function addExtras() {
   let opts  = $('tt_currentUnorderedListOptions').getElementsByTagName('li');
+  $('spinner').style = 'display: none;';
+  $('cover').style = 'display: none;';
   for(let i = 0; i < opts.length; i++){
     opts[i].setAttribute("onclick",  "null; updateTouchscreenInputForSelect(this);checkResultAvailability(this);")
   }
