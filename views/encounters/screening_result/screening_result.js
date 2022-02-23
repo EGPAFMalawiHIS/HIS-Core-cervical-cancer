@@ -10,7 +10,7 @@ function showPostponedReason() {
 
 function showReferralReason() {
   let treatment_option = $('treatment_option').value;
-  return (treatment_option == 'Referral' ? true :  false);
+  return (treatment_option.match(/Referral|Suspect/) ? true :  false);
 }
 
 function changeNextButton(){
@@ -219,7 +219,7 @@ function loadTreatmentOptions(screening_method){
   }else if(screening_method.match(/HPV DNA/i)){
     options = ["HPV positive","HPV negative"];
   }else if(screening_method.match(/Speculum/i)){
-    options = ["Visible Lesion","No visible Lesion","Other Gynae"];
+    options = ["Visible Lesion","No visible Lesion","Suspect Cancer","Other Gynae"];
   }
 
   addVIAoptions(screening_result, options, screening_result_main);
@@ -271,7 +271,7 @@ function changeNextIfneccessary(e){
   let selected_option = e.getAttribute('tstvalue');
 
   if(selected_option.match(/Negative/i) || selected_option.match(/smear normal/i)
-    || selected_option.match(/No visible/i) || selected_option.match(/Suspect/i)){
+    || selected_option.match(/No visible/i) ){
       nextButton.setAttribute("onmousedown","negativeResult();");
       nextButton.innerHTML = "<span>Finish</span>";
   }else{
@@ -337,7 +337,9 @@ function resultConcept(concept_name){
     "VIA Positive": 10042,
     "PAP Smear Abnormal": 10024,
     "HPV positive": 10026,
-    "Visible Lesion": 10027
+    "Visible Lesion": 10027,
+    "STI": 174,
+    "Cervicitis": 149
   };
   return screening_results[concept_name];
 }
@@ -465,5 +467,49 @@ function postNoResults(encounter){
   submitParameters(obs, "/observations", "nextPage");
 }
 
+function endVisitGynae(){
+  let nextBTN = $('nextButton');
+  nextBTN.setAttribute("onmousedown", "validateOtherGynae();");
+  nextBTN.innerHTML = "<span>Finish</span>";
+}
+
+function validateOtherGynae(){
+  const method = $('touchscreenInput' + tstCurrentPage).value;
+  const options = $('options').getElementsByTagName('li');
+  let valid_method = false;
+
+  for(const li of options){
+    if(li.textContent == method)
+      valid_method = true;
+
+  }
+
+  if(!valid_method){
+    showMessage("Please select a valid method");
+    return;
+  }
+
+
+  const encounter = encounterOBJ();
+  submitParameters(encounter, "/encounters", "otherGynaeObs");
+}
+
+function otherGynaeObs(encounter){
+  let screening_result_text =  __$('screening_result').value;
+  let screening_result_concept = resultConcept(screening_result_text);
+
+  let treatment_result_text = $('touchscreenInput' + tstCurrentPage).value;
+  let treatment = resultConcept(treatment_result_text);
+
+  const obs = {
+    encounter_id: encounter.encounter_id,
+    observations: [
+      {concept_id: 10562, value_coded: 1065},
+      {concept_id: 10040, value_coded: screening_result_concept}, 
+      {concept_id: 1185, value_coded: treatment}
+    ]
+  }; 
+  submitParameters(obs, "/observations", "nextPage");
+}
 
 fetchTreatmentOptions();

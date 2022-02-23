@@ -207,7 +207,6 @@ defer="true"></script>
               <input type="text" name="summary"
                      tt_onLoad="__$('keyboard').style.display = 'none';addOfferCxCaYesNo();"
                      tt_pageStyleClass="NoControls" 
-                     condition="art_offer_cxca_data == false"
                      helpText="Offer CxCa screening today" optional="true"/>
                     
                <select allowFreeText="false" helpText="Screening method being offered today" 
@@ -228,7 +227,10 @@ defer="true"></script>
                   tt_onLoad="setReasonForNoVIA();" key="reason_for_no_cxca">
                   <option value=""></option>
                   <option value="Client preferred counseling">Client preferred counseling</option>
-                  <option value="Not applicable">Not applicable</option>
+                  <option value="Chemotherapy">Chemotherapy</option>
+                  <option value="Services not available">Services not available</option>
+                  <option value="Provider not available">Provider not available</option>
+                  <option value="Patient refused">Patient refused</option>
               </select>
               
           </form>

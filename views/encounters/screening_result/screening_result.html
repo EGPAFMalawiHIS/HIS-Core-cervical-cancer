@@ -69,6 +69,16 @@ defer="true"></script>
                  <option value=""></option>
               </select>
 
+              <!-- Other Gyne conditions-->
+              <select allowFreeText="false" helpText="Other Gynae treatment" 
+                 id="gynae_options" name="gynae_options" 
+                 condition="__$('screening_result').value == 'Other Gynae';"
+                 tt_onLoad="endVisitGynae();" key="gynae_options">
+                 <option value=""></option>
+                 <option value="STI">STI</option>
+                 <option value="cervicitis">Cervicitis</option>
+              </select>
+              <!-- Other Gyne conditions-->
 
               <!-- Offer VIA if HPV positive starts-->
               <select allowFreeText="false" helpText="Offer VIA" 

@@ -436,7 +436,11 @@ const VIAresults = {
 
 const ReasonForNoCxCa =  {
   "Not applicable": 1175,
-  "Client preferred counseling": 10007
+  "Client preferred counseling": 10007,
+  "Patient refused": 3580,
+  "Chemotherapy": 10001,
+  "Services not available": 10543,
+  "Provider not available": 10544
 };
 
 
@@ -623,7 +627,7 @@ function validateScreeningMethod(){
 
   submitParams();
 }
-
+/*
 var art_offer_cxca_data = false;
 
 function ARTofferCxCa() {
@@ -651,13 +655,13 @@ function ARTofferCxCa() {
   xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
   xhttp.setRequestHeader('Content-type', "application/json");
   xhttp.send();
-}
+} 
 
 function setOfferCxCa(){
   yesNo_Hash = {};
   yesNo_Hash["Offer CxCa screening"] = {};
   yesNo_Hash["Offer CxCa screening"]["Offer CxCa screening?"] = 'Yes';
-}
+}*/
 
 var hiv_status_details = {};
 
@@ -697,7 +701,7 @@ function enterHIVtestDate(){
 }
 
 
-ARTofferCxCa();
+//ARTofferCxCa();
 HIVststus();
 
 
