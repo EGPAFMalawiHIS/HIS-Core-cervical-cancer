@@ -137,8 +137,8 @@ defer="true"></script>
 
               <select allowFreeText="false" helpText="Select referral reason" 
                  id="referral_reason" name="referral_reason" 
-                 condition="showReferralReason() == true;" 
-                 tt_onLoad="" key="referral_reason">
+                 condition="showReferralReason() == true" 
+                 tt_onLoad="suspectedCancer();" key="referral_reason">
                  <option value=""></option>
                  <option value="Further Investigation and Management">Further Investigation and Management</option>
                  <option value="Large Lesion (greater than 75 percent)">Large Lesion (greater than 75 percent)</option>
@@ -152,7 +152,7 @@ defer="true"></script>
                     condition="showReferralReason() == true;"
                     field_type="alpha" helpText="Referred location" id="referred_location"
                     name="observations[][value_coded_or_text]"
-                    tt_onLoad="changeNextButton()">
+                    tt_onLoad="changeNextButton();setTimeout(setBackButton(), 1000);">
               </select>
 
 

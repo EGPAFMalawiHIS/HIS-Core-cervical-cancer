@@ -13,6 +13,30 @@ function showReferralReason() {
   return (treatment_option.match(/Referral|Suspect/) ? true :  false);
 }
 
+function suspectedCancer() {
+  let screening_result = $('screening_result').value;
+  let treatment_option = $('treatment_option').value;
+
+  if(screening_result == 'Suspect Cancer' && treatment_option == 'Referral'){
+    const list = $('tt_currentUnorderedListOptions').getElementsByTagName('li');
+    for(const li of list){
+      if(li.getAttribute("tstvalue") == 'Suspect cancer'){
+        updateTouchscreenInputForSelect(li);
+        gotoNextPage();
+      }
+    }
+  }
+}
+
+function setBackButton() {
+  let screening_result = $('screening_result').value;
+  let treatment_option = $('treatment_option').value;
+
+  if(screening_result == 'Suspect Cancer' && treatment_option == 'Referral'){
+    $('backButton').setAttribute("onmousedown",`gotoPage(${tstCurrentPage - 3}, null, true);`);
+  }
+}
+
 function changeNextButton(){
   let inputFrame = $('inputFrame' +  tstCurrentPage);
   inputFrame.style = "width: 95.5%;";
@@ -219,7 +243,7 @@ function loadTreatmentOptions(screening_method){
   }else if(screening_method.match(/HPV DNA/i)){
     options = ["HPV positive","HPV negative"];
   }else if(screening_method.match(/Speculum/i)){
-    options = ["Visible Lesion","No visible Lesion","Suspect Cancer","Other Gynae"];
+    options = ["Visible Lesion","No visible Lesion","Other Gynae"];
   }
 
   addVIAoptions(screening_result, options, screening_result_main);
