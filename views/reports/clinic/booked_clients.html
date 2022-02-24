@@ -1,0 +1,239 @@
+<html>
+<head>
+  <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+  <meta content="utf-8" http-equiv="encoding">
+
+  <script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js" defer="true"></script>
+  <script type="text/javascript" src="/assets/js/moment.js"></script>
+
+  <style>
+    .text-center {
+      text-align: center;
+    }
+    
+    .text-left {
+      text-align: left;
+      width: 25%;
+    }
+
+    .action-btns {
+      width: 120px;
+      text-align: center;
+    }
+
+    #clients td {
+      border-style: solid;
+      border-width: 1px;
+    }
+
+    #report-cover {
+      position: absolute;
+      background-color: black;
+      width: 100%;
+      height: 102%;
+      left: 0%;
+      top: 0%;
+      z-index: 990;
+      opacity: 0.65;
+    }
+
+    #spinner {
+      position: absolute;
+      top: 150px;
+      left: 40%;
+      z-index: 991;
+    }
+
+  </style>
+
+  <script>
+    var tt_cancel_destination = "/";
+
+    function pageSetup() {
+      var inputFrame = document.getElementById("inputFrame" + tstCurrentPage);
+      inputFrame.style = "height: 90%; width: 95.5%; background-color: white;";
+      var chartContainer = document.createElement("div");
+      chartContainer.setAttribute("id","chart-container");
+      inputFrame.appendChild(chartContainer);
+
+      let helpText = document.getElementById("helpText" + tstCurrentPage);
+      let helpTextInnerHTML = `${series_name} <span style='font-size: 14px;'>Period of: ` +  moment(start_date).format("DD/MMM/YYYY") + " to "; 
+      helpText.innerHTML = (helpTextInnerHTML += moment(end_date).format("DD/MMM/YYYY") + "</span>"); 
+
+      var finishBTN = document.getElementById("nextButton");
+      finishBTN.setAttribute("onmousedown","javascript:location='/'");
+        
+      tableHTML = `
+      <table id="clients">
+        <thead>
+          <th class="text-left">&nbsp;</th>
+          <th class="text-left">First name</th>
+          <th class="text-left">Last name</th>
+          <th class="text-center">Birthdate</th>
+          <th class="text-center">Booked</th>
+          <th class="text-center">Seen</th>
+          <th class="text-left">&nbsp;</th>
+        </thead>
+      </table>`;
+
+
+      
+      inputFrame.innerHTML = tableHTML;
+      initTable();
+      //renderChart();
+    }
+
+    function initTable(){
+      let columnDefs = [
+          {"className": "text-left", "targets": 0},
+          {"className": "text-left", "targets": 1},
+          {"className": "text-left", "targets": 2},
+          {"className": "text-center", "targets": 3},
+          {"className": "text-center", "targets": 4},
+          {"className": "text-center", "targets": 5},
+          {"className": "text-center", "targets": 6}
+        ];
+
+      data_table = jQuery('#clients').DataTable( {
+        fixedHeader:    true,
+        searching:      false,
+        //data:           formatted_data,
+        deferRender:    true,
+        scrollY:        480,
+        scrollCollapse: false,
+        scroller:       false,
+        pageLength:     20,
+        lengthChange:   false,
+        paging:         true,
+        columnDefs: [{
+          targets: 0, type: 'natural'
+        } ],
+        dom: 'Bfrtip',
+        /*buttons: [
+          {
+            extend: 'csv',
+            title: 'Clinic ' + sessionStorage.currentLocation + ' client regimen history report: ' + period ,
+            footer: true
+          },
+          {
+            extend: 'pdf',
+            title: 'Clinic ' + sessionStorage.currentLocation + ' client regimen history report: ' + period 
+          }
+        ], */
+        columnDefs: columnDefs
+      } );
+      fetchData();
+    }
+
+    var url = window.location.href;
+    url = new URL(url);
+    const start_date = url.searchParams.get("start_date");
+    const end_date = url.searchParams.get("end_date");
+    var series_name = "Booked clients"
+    var data_table;
+   
+    
+    function fetchData(){
+     
+			let url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1";
+			url += "/screened_for_cxca?date=" + sessionStorage.sessionDate;
+			url += `&program_id=${sessionStorage.programID}`;
+			url += `&report_name=BOOKED CLIENTS FROM ART RAW DATA`;
+			url += `&start_date=${start_date}&end_date=${end_date}`; 
+
+
+      var xhttp = new XMLHttpRequest();
+      xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+          clients = JSON.parse(this.responseText);
+          document.getElementById("report-cover").style.display = "none";
+          document.getElementById("spinner").style.display = "none";
+          addRows(clients);
+        }
+      };
+      xhttp.open("GET", url, true);
+      xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+      xhttp.setRequestHeader('Content-type', "application/json");
+      xhttp.send();
+    }
+
+     
+    function addRows(clients){
+			for(const client of clients){
+				const identifier = client.identifier;
+				const	given_name = client.given_name;
+				const family_name = client.family_name;
+				let birthdate = client.dob;
+				let gender = client.gender;
+				let booked_date = client.booked_date;
+
+        data_table.row.add([identifier, given_name, family_name,
+        	birthdate, booked_date, client.seen,  actionBTN(client.person_id)]).draw();
+			}
+    }
+
+    function actionBTN(patient_id){
+      return `<button class="button view-btn blue navButton" 
+      onmousedown="javascript:location='/views/patient_dashboard.html?patient_id=${patient_id}';">
+        <span>View</span></button>`;
+    }
+
+  </script>
+  <script type="text/javascript" src="../../../assets/js/jquery.min.js"></script>
+  <link rel="stylesheet" href="../../../assets/css/datatable/jquery.dataTables.min.css" type="text/css">
+  <link rel="stylesheet" href="../../../assets/css/datatable/scroller.dataTables.min.css" type="text/css">
+  <script type="text/javascript" src="../../../assets/js/datatables/jquery.dataTables.min.js"></script>
+  <script type="text/javascript" src="../../../assets/js/datatables/dataTables.fixedHeader.min.js"></script>
+
+
+<style type="text/css">
+  #clients {
+    width: 100%;
+  }
+
+  #spinner {
+    position: absolute;
+    top: 150px;
+    left: 40%;
+    z-index: 991;
+  }
+
+  #report-cover {
+    position: absolute;
+    background-color: black;
+    width: 100%;
+    height: 102%;
+    left: 0%;
+    top: 0%;
+    z-index: 990;
+    opacity: 0.65;
+  }
+
+  #cancelButton, #clearButton {
+    display: none;
+  } 
+</style>
+
+</head>
+
+<body id="mateme">
+  <div id="container">
+    <div id="content">
+
+
+    <form>
+
+      <input type="text" name="summary"
+        tt_onLoad="__$('keyboard').style.display = 'none'; pageSetup();" 
+        tt_pageStyleClass= "NoControls" helpText="" optional = "true"/>
+
+    </form>
+
+ </div>
+</div>
+
+<div id="report-cover"></div>
+<img src="/assets/images/formloader.gif" id="spinner" />
+</body>
+
+</html>
