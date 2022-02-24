@@ -243,7 +243,7 @@ function loadTreatmentOptions(screening_method){
   }else if(screening_method.match(/HPV DNA/i)){
     options = ["HPV positive","HPV negative"];
   }else if(screening_method.match(/Speculum/i)){
-    options = ["Visible Lesion","No visible Lesion","Other Gynae"];
+    options = ["Visible Lesion","No visible Lesion","Suspect Cancer", "Other Gynae"];
   }
 
   addVIAoptions(screening_result, options, screening_result_main);
