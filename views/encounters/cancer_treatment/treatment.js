@@ -405,7 +405,7 @@ function fetchConceptName(name, concept_id){
 function buildSummaryPage(){
   let table = `<table id="summary-table">
     <tr>
-      <th>Screening Method</th>
+      <th>Screening Result</th>
       <td id="screening-method">&nbsp;</td>
     </tr>
     <tr>
@@ -428,5 +428,6 @@ function buildSummaryPage(){
 
 
 function showSampleCollected(){
-  return (referral_reason == 'Large Lesion (>75%)' || referral_reason == 'Further Investigation and Management');
+  return (referral_reason == 'Large Lesion (>75%)' || referral_reason == 'Suspect cancer'
+    || referral_reason == 'Further Investigation and Management');
 }
