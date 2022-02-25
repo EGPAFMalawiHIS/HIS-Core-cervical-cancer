@@ -104,8 +104,10 @@ function updateOutcome(concept_name){
       if (this.readyState == 4) {
           if (this.status == 201) {
             let obs = JSON.parse(this.responseText);
-            if(concept_name == 'Continue follow-up'){
-              createEncounter();  
+            //if(concept_name == 'Continue follow-up'){
+            if(referral_reason.match(/suspect/i) && 
+              (referral_reason == 'Large Lesion (>75%)' || referral_reason == 'Further Investigation and Management')){
+                createEncounter();    
             }else{
               uploadObservations();
             }
@@ -143,7 +145,7 @@ function postObs(encounter){
   let figo_staging_results = $('figo_staging_results').value;
   let type_of_sample_collected = $('type_of_sample_collected').value;
 
-  if(figo_staging_results == 'Not available' && type_of_sample_collected == 'Not available'){
+  if(referral_reason.match(/suspect/i) && figo_staging_results == 'Not available' && type_of_sample_collected == 'Not available'){
     observations = {
       encounter_id: encounter.encounter_id,
       observations: [
@@ -159,32 +161,31 @@ function postObs(encounter){
     };
 
     let histology_results = $('histology_results').value;
-    let complications_during_lletz = $('complications_during_lletz').value;
+    let complications = $('complications').value;
     let select_referral_outcome = $('select_referral_outcome').value;
-    let recommended_plan_of_care_for_lletz = $('recommended_plan_of_care_for_lletz').value;
+    let recommended_plan_of_care = $('recommended_plan_of_care').value;
     let patient_outcome = $('touchscreenInput' + tstCurrentPage).value;
 
-    if(type_of_sample_collected != 'Not available'){
-      observations.observations.push({concept_id: 6680, value_coded: getConceptCode(type_of_sample_collected)});
-    }
-
-    if(figo_staging_results != 'Not available'){
+    if(referral_reason.match(/suspect/i) && figo_staging_results != 'Not available'){
       observations.observations.push({concept_id: 10545, value_coded: getConceptCode(figo_staging_results)});
     }
 
-    if(type_of_sample_collected != 'Not available'){
-      observations.observations.push({concept_id: 10548, value_coded: getConceptCode(histology_results)});
-    }
+    if(referral_reason == 'Large Lesion (>75%)' || referral_reason == 'Further Investigation and Management'){
+      if(type_of_sample_collected != 'Not available'){
+        observations.observations.push({concept_id: 6680, value_coded: getConceptCode(type_of_sample_collected)});
+      }
 
-    if(type_of_sample_collected == 'LLETZ sample'){
-      observations. observations.push({concept_id: 6406, value_coded: getConceptCode(complications_during_lletz)});
+      if(type_of_sample_collected != 'Not available'){
+        observations.observations.push({concept_id: 10548, value_coded: getConceptCode(histology_results)});
+      }
+
+      if(histology_results != 'Not available')
+        observations. observations.push({concept_id: 6406, value_coded: getConceptCode(complications)});
+
     }
 
     observations.observations.push({concept_id: 1185, value_coded: getConceptCode(select_referral_outcome)});
-
-    if(select_referral_outcome == 'LLETZ'){
-      observations.observations.push({concept_id: 10561, value_coded: getConceptCode(recommended_plan_of_care_for_lletz)});
-    }
+    observations.observations.push({concept_id: 10561, value_coded: getConceptCode(recommended_plan_of_care)});
 
     updateOutcome(patient_outcome);
   }
@@ -202,7 +203,7 @@ function nextPage(obs){
 
 
 
-fetchPreviousVIAoutcome();
+//fetchPreviousVIAoutcome();
 
 
 
@@ -310,4 +311,122 @@ function getConceptCode(name) {
     'Cervical stage 4': 8740 
   };
   return concept_names[name]
+}
+
+
+
+var previous_status = {};
+previous_status['previous_screening_results'] = null;
+previous_status['previous_treament_type'] = null;
+previous_status['referral_reason'] = null;
+
+function previousScreeningSummary(container_name, concept_id){
+  let url = apiProtocol+ '://' + apiURL + ':' + apiPort;
+  url += `/api/v1/observations?person_id=${sessionStorage.patientID}&concept_id=${concept_id}`;
+
+  var req = new XMLHttpRequest();
+  req.onreadystatechange = function () {
+      if (this.readyState == 4) {
+          if (this.status == 200) {
+              let obs = JSON.parse(this.responseText);
+              let latest_date;
+              for(let i = 0; i < obs.length; i++){
+                if(latest_date == undefined){
+                  latest_date = moment(obs[i].obs_datetime).format("YYYY-MM-DD");
+                  previous_status[container_name] = obs[i];
+                }else{
+                  if(moment(obs[i]).format("YYYY-MM-DD") > latest_date){
+                    latest_date = moment(obs[i].obs_datetime).format("YYYY-MM-DD");
+                    previous_status[container_name] = obs[i];
+                  }
+                }
+              }
+          }
+          fetchConcepts();
+      }
+  };
+  try {
+      req.open('GET', url, true);
+      req.setRequestHeader('Authorization', sessionStorage.getItem('authorization'));
+      req.send(null);
+  } catch (e) {
+  }
+}
+
+function fetchConcepts(){
+  for(const name in previous_status){
+    const obs = previous_status[name];
+    try {
+      fetchConceptName(name, obs.value_coded);
+    }catch(e){
+      continue;
+    }
+  }
+
+  $("report-cover").style = "display: none;";
+  $("spinner").style = "display: none;";
+}
+
+var previous_screening_results = "";
+var referral_reason = 'N/A';
+
+function fetchConceptName(name, concept_id){
+  let url = apiProtocol+ '://' + apiURL + ':' + apiPort;
+  url += `/api/v1/concepts/${concept_id}`;
+
+  var req = new XMLHttpRequest();
+  req.onreadystatechange = function () {
+      if (this.readyState == 4) {
+          if (this.status == 200) {
+              let concept = JSON.parse(this.responseText);
+              if(name == 'previous_screening_results'){
+                $("screening-method").innerHTML = concept.concept_names[0].name;
+                previous_screening_results = concept.concept_names[0].name;
+              }else if(name == 'previous_treament_type'){
+                $("treatment-type").innerHTML = concept.concept_names[0].name;
+              }else{
+                if(concept){
+                  $("referral-reason").innerHTML = concept.concept_names[0].name;
+                  referral_reason = concept.concept_names[0].name;
+                }
+
+              }
+          }
+      }
+  };
+  try {
+      req.open('GET', url, true);
+      req.setRequestHeader('Authorization', sessionStorage.getItem('authorization'));
+      req.send(null);
+  } catch (e) {
+  }
+}
+
+function buildSummaryPage(){
+  let table = `<table id="summary-table">
+    <tr>
+      <th>Screening Method</th>
+      <td id="screening-method">&nbsp;</td>
+    </tr>
+    <tr>
+      <th>Treatment Type</th>
+      <td id="treatment-type">&nbsp;</td>
+    </tr>
+    <tr>
+      <th>Referral Reason</th>
+      <td id="referral-reason">N/A</td>
+    </tr>
+  </table>`;
+  
+  let container = document.getElementById('inputFrame' + tstCurrentPage);
+  container.style = 'width: 96%; height: 89%;';
+  container.innerHTML = table;
+  previousScreeningSummary('previous_screening_results', 10040);
+  previousScreeningSummary('previous_treament_type', 3567);
+  previousScreeningSummary('referral_reason', 1739);
+}
+
+
+function showSampleCollected(){
+  return (referral_reason == 'Large Lesion (>75%)' || referral_reason == 'Further Investigation and Management');
 }

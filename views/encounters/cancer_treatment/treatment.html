@@ -31,8 +31,15 @@ defer="true"></script>
   
           <form>
 
+            <input type="text" name="summary"
+             tt_onLoad="__$('keyboard').style.display = 'none'; buildSummaryPage();"
+             tt_pageStyleClass="NoControls" 
+             helpText="Previous screening summary" optional="true"/>
+
+
             <select allowFreeText="false" helpText="FIGO staging results" 
-                id="figo_staging_results" name="figo_staging_results" 
+                id="figo_staging_results" name="figo_staging_results"
+                condition = "referral_reason.match(/suspect/i)" 
                 tt_onLoad="checkIfInBDMode();" key="figo_staging_results">
                 <option value=""></option>
                 <option value="Cervical stage 1">Cervical stage 1</option>
@@ -44,6 +51,7 @@ defer="true"></script>
 
               <select allowFreeText="false" helpText="Type of sample collected" 
                 id="type_of_sample_collected" name="type_of_sample_collected" 
+                condition = "showSampleCollected() == true" 
                 tt_onLoad="addExtras();" key="type_of_sample_collected">
                 <option value=""></option>
                 <option value="Punch Biopsy">Punch Biopsy</option>
@@ -53,7 +61,7 @@ defer="true"></script>
 
               <select allowFreeText="false" helpText="Histology results" 
                 id="histology_results" name="histology_results" 
-                condition="$('type_of_sample_collected').value != 'Not available'"
+                condition="$('type_of_sample_collected').value != 'Not available' && showSampleCollected() == true"
                 tt_onLoad="" key="histology_results">
                 <option value=""></option>
                 <option value="Normal">Normal</option>
@@ -66,10 +74,10 @@ defer="true"></script>
                 <option value="Not available">Not available</option>
               </select>
 
-              <select allowFreeText="false" helpText="Complications during LLETZ" 
-                condition="$('type_of_sample_collected').value == 'LLETZ sample'"  
-                id="complications_during_lletz" name="complications_during_lletz" 
-                tt_onLoad="" key="complications_during_lletz">
+              <select allowFreeText="false" helpText="Complications" 
+                id="complications" name="complications" 
+                condition="$('histology_results').value != 'Not available' && showSampleCollected() == true"
+                tt_onLoad="" key="complications">
                 <option value=""></option>
                 <option value="Bleeding">Bleeding</option>
                 <option value="Pain">Pain</option>
@@ -93,8 +101,8 @@ defer="true"></script>
               </select>
 
               <select allowFreeText="false" helpText="Recommended Plan of care" 
-                id="recommended_plan_of_care_for_lletz" name="recommended_plan_of_care_for_lletz" 
-                tt_onLoad="" key="recommended_plan_of_care_for_lletz">
+                id="recommended_plan_of_care" name="recommended_plan_of_care" 
+                tt_onLoad="" key="recommended_plan_of_care">
                 <option value=""></option>
                 <option value="Hysyerectomy">Hysyerectomy</option>
                 <option value="Trachelectomy">Trachelectomy</option>
@@ -106,6 +114,7 @@ defer="true"></script>
                 id="patient_outcome" name="patient_outcome" 
                 tt_onLoad="addEndFunction();" key="patient_outcome">
                 <option value=""></option>
+                <option value="Continue follow-up">Continue follow-up</option>
                 <option value="Palliative Care">Palliative Care</option>
                 <option value="No Dysplasia/Cancer">No Dysplasia/Cancer</option>
                 <option value="Patient died">Patient died</option>
@@ -119,5 +128,6 @@ defer="true"></script>
       </div>
   </div>
 
-  <div id="page-load-cover"></div>
+   <img src="/../../assets/images/formloader.gif" id="spinner" />  
+  <div id="report-cover"></div>
 </body>

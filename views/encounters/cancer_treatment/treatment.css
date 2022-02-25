@@ -2,8 +2,7 @@
   display: none !important;
 }
 
-#page-load-cover {
-  display: none;
+#report-cover {
   position: absolute;
   background-color: black;
   width: 100%;
@@ -13,6 +12,14 @@
   z-index: 990;
   opacity: 0.65;
 }
+
+#spinner {
+  position: absolute;
+  top: 150px;
+  left: 40%;
+  z-index: 991;
+}
+
 
 .inputFrameClass {
   width: 96% !important;
@@ -24,4 +31,14 @@
 
 #tt_page_treatment_performed .options {
   height: 70%;
+}
+
+#summary-table th {
+  width: 25% !important;
+}
+
+#summary-table {
+  width: 100%;
+  font-size: 25px;
+  text-align: left;
 }
