@@ -441,7 +441,8 @@ const ReasonForNoCxCa =  {
   "Chemotherapy": 10001,
   "Services not available": 10543,
   "Provider not available": 10544,
-  "On treatment": 3501
+  "On treatment": 3501,
+  "Not applicable": 1175
 };
 
 
